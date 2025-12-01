@@ -63,6 +63,18 @@ public class UserService {
 		return true;
 //		}
 	}
+
+	
+	//회원 삭제 
+	public Boolean delete(Long id) {
+		Boolean isPresent = userRepository.findById(id).isPresent();	
+			
+		if(isPresent) {
+			userRepository.deleteById(id);
+		}
+		
+		return isPresent;
+	}
 	
 	
 	

@@ -9,6 +9,7 @@ import com.toy.project.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -52,6 +53,16 @@ public class UserController {
 		return "update success";
 		}else {
 			return "update failed";
+		}
+	}
+	
+	@DeleteMapping("/deleteUser/{id}")
+	public String deleteUser(@PathVariable(name = "id") Long id) {
+		Boolean result = userService.delete(id);
+		if(result) {
+		return "delete success";
+		}else {
+			return "delete failed";
 		}
 	}
 	
