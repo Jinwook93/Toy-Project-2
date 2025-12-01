@@ -1,5 +1,6 @@
 package com.toy.project.dto;
 
+import jakarta.persistence.Lob;
 import lombok.Data;
 
 @Data
@@ -14,7 +15,10 @@ public class JoinDTO {
 	String phone;
 	String address;
 	
-	String profile;
+//	String profile;
+	@Lob
+    private byte[] profile;  // BLOB으로 매핑됨
+	
 	String role;
 	
 }

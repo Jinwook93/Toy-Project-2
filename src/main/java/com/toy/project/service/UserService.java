@@ -1,7 +1,10 @@
 package com.toy.project.service;
 
+import java.io.File;
+
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.toy.project.dto.JoinDTO;
 import com.toy.project.entity.UserEntity;
@@ -32,14 +35,14 @@ public class UserService {
 	}
 	
 	@Transactional
-	public Boolean join(JoinDTO joinDTO) {
+	public Boolean join(JoinDTO joinDTO, MultipartFile file) {
 		
 		Boolean isDuplicated= this.duplicatedEmail(joinDTO.getEmail());
 		if(isDuplicated) {
 			return false;
 		}else {
 		joinDTO.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));	//비밀번호 암호화
-		UserEntity newuser = new UserEntity(joinDTO);
+		UserEntity newuser = new UserEntity(joinDTO,file);
 		userRepository.save(newuser);
 		return true;
 		}

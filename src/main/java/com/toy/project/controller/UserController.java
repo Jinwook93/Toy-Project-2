@@ -1,6 +1,7 @@
 package com.toy.project.controller;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.toy.project.dto.JoinDTO;
 import com.toy.project.service.UserService;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 
 
 @RestController
@@ -27,8 +29,9 @@ public class UserController {
 	}
 		
 	@PostMapping("/join")
-	public String postJoin(JoinDTO joinDTO) {
-		Boolean result = userService.join(joinDTO);
+	public String postJoin(@RequestPart("joinDTO") JoinDTO joinDTO,  @RequestPart(name ="file", required = true) MultipartFile file) {
+		System.out.println("파일이름"+file);
+		Boolean result = userService.join(joinDTO,file);
 		if(result) {
 		return "join success";
 		}else {
