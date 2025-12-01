@@ -1,10 +1,12 @@
 package com.toy.project.service;
 
 import java.io.File;
+import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -14,6 +16,7 @@ import com.toy.project.dto.JoinDTO;
 import com.toy.project.dto.LoginDTO;
 import com.toy.project.dto.UpdateUserDTO;
 import com.toy.project.entity.UserEntity;
+import com.toy.project.jwt.JwtUtil;
 import com.toy.project.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -28,7 +31,7 @@ public class UserService {
 	private final UserRepository userRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final AuthenticationManager authenticationManager;
-	
+	private final JwtUtil jwtUtil;
 	
 	@Transactional
 	public Boolean duplicatedEmail(String email) {
@@ -84,13 +87,27 @@ public class UserService {
 	}
 
 	//로그인
-	public Boolean login(LoginDTO loginDTO) {
+	public String login(LoginDTO loginDTO) {
 	    Authentication authentication = authenticationManager.authenticate(
 	        new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
 	    );
 	    SecurityContextHolder.getContext().setAuthentication(authentication);
-	    return true;
-//	    return jwtTokenProvider.createToken(authentication);
+
+	    
+	    // 권한(Role) 추출
+	    String role = authentication.getAuthorities().stream()
+	        .map(GrantedAuthority::getAuthority)
+	        .findFirst()   // 여러 권한이 있을 경우 첫 번째만 사용
+	        .orElse("ROLE_USER");
+	    
+	 // ROLE_ 제거 후 JWT에 저장
+	    if (role.startsWith("ROLE_")) {
+	        role = role.substring(5); // "ROLE_ADMIN" -> "ADMIN"
+	    }
+
+	    
+	    
+	    return jwtUtil.createToken(loginDTO.getEmail(),role , 60*60*1000L);
 	}
 	
 	

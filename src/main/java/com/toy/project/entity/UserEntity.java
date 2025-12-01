@@ -50,6 +50,16 @@ public class UserEntity {
 	@CreationTimestamp
 	Date makingTime;
 	
+	
+	//회원 임시 로그인 (Stateless)
+	public UserEntity(String email, String password, String role){
+		this.email = email;
+		this.password = password;
+		this.role = role;
+		
+		
+	}
+	
 	//회원 등록
 	@Builder
 	public UserEntity(JoinDTO joinDTO,MultipartFile file){
@@ -66,7 +76,7 @@ public class UserEntity {
 	        throw new RuntimeException("파일 변환 실패", e);
 	    }
 
-		this.role = joinDTO.getRole().equals("USER")?"ROLE_USER":"ROLE_ADMIN";
+		this.role = joinDTO.getRole().equals("ADMIN")?"ADMIN":"USER";
 	}
 
 	//회원 수정
@@ -84,7 +94,7 @@ public class UserEntity {
 	        throw new RuntimeException("파일 변환 실패", e);
 	    }
 
-		this.role =  updateUserDTO.getRole().equals("USER")?"ROLE_USER":"ROLE_ADMIN";
+	    this.role = updateUserDTO.getRole().equals("ADMIN")?"ADMIN":"USER";
 	}
 	
 }

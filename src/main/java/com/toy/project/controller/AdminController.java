@@ -27,7 +27,7 @@ public class AdminController {
 	private final AdminService adminService;
 	private final ObjectMapper objectMapper;
 	
-	@GetMapping("/")
+	@GetMapping
 	public String getAdmin() {
 		return "admin";
 	}

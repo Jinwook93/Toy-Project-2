@@ -10,21 +10,31 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
 import org.springframework.web.cors.CorsConfigurationSource;
 
+import com.toy.project.jwt.JwtFilter;
+import com.toy.project.jwt.JwtUtil;
 import com.toy.project.service.CustomUserDetailsService;
+
+import lombok.RequiredArgsConstructor;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
-	@Autowired
 	private CustomUserDetailsService customUserDetailsService;
+	private final JwtUtil jwtUtil;
+	
 	
 	@Bean
 	BCryptPasswordEncoder bCryptPasswordEncoder() {
 		return new  BCryptPasswordEncoder();
 	}
+	
+
+	
 	
 	 // AuthenticationManager Bean 등록
     @Bean
@@ -35,15 +45,26 @@ public class SecurityConfig {
 
 
 	
+    @Bean
+    SecurityFilterChain loginChain(HttpSecurity http) throws Exception {
+        http.securityMatcher("/user/login", "/user/join")
+            .csrf(csrf -> csrf.disable())
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+        return http.build();
+    }
+
+    
 	
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) {
+	SecurityFilterChain apiChain(HttpSecurity http) {					//토큰을 비교 하는 필터 수행
 		http
+		.securityMatcher("/**")
 		.formLogin(formLogin -> formLogin.disable())
 		.csrf(csrf -> csrf.disable())
+		.addFilterBefore(new JwtFilter(jwtUtil), BasicAuthenticationFilter.class)
 		.authorizeHttpRequests((auth) ->
-				auth.requestMatchers("/","/login","/user/**").permitAll()
-				.requestMatchers("/admin").hasRole("ADMIN")
+				auth.requestMatchers("/", "/user/**").permitAll()
+				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest().authenticated())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 		

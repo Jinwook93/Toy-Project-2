@@ -25,7 +25,10 @@ public class CustomUserDetails implements UserDetails {
 //        authorities.add(new SimpleGrantedAuthority("ROLE_" + userEntity.getRole()));
         return authorities;
     }
-
+    
+    
+    
+    
     @Override
     public String getPassword() {
         return userEntity.getPassword();

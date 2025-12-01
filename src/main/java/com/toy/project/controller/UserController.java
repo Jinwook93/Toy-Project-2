@@ -34,8 +34,6 @@ import org.springframework.web.bind.annotation.RequestPart;
 public class UserController {
 	
 		private final UserService userService;
-//		private final AdminService adminService;
-//		private final ObjectMapper objectMapper;
 		
 	@GetMapping("/isDuplicatedEmail")
 	public Boolean checkEmail(String email) {
@@ -60,9 +58,11 @@ public class UserController {
 	
 	@PostMapping("/login")
 	public ResponseEntity<?> postLogin(@RequestBody LoginDTO loginDTO) {
-		Boolean result = userService.login(loginDTO);
-		if(result) {
-			return ResponseEntity.status(200).body("로그인 성공");
+		String result = userService.login(loginDTO);
+		if(result != null && result != "") {
+			return ResponseEntity.status(200)
+					.header("Authorization", "Bearer " + result) // 헤더에 토큰 추가
+					.body("로그인 성공");
 		}else {
 			return ResponseEntity.badRequest().body("로그인 실패");
 		}
@@ -91,11 +91,6 @@ public class UserController {
 		}
 	}
 	
-//	@GetMapping("/allMember")
-//	public String getAllMember() {
-//		List<UserEntity> allMember = adminService.getAllMember();
-//		String allMember_string = objectMapper.writeValueAsString(allMember);
-//		return allMember_string;
-//	}
+
 	
 }
