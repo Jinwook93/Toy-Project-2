@@ -4,6 +4,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.toy.project.dto.JoinDTO;
+import com.toy.project.dto.LoginDTO;
+import com.toy.project.dto.ResponseDTO;
 import com.toy.project.dto.UpdateUserDTO;
 import com.toy.project.entity.UserEntity;
 import com.toy.project.service.AdminService;
@@ -14,6 +16,7 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -41,34 +44,50 @@ public class UserController {
 	}
 		
 	@PostMapping("/join")
-	public String postJoin(@RequestPart("joinDTO") JoinDTO joinDTO,  @RequestPart(name ="file", required = true) MultipartFile file) {
-		System.out.println("파일이름"+file);
+	public  ResponseEntity<?>  postJoin(@RequestPart("joinDTO") JoinDTO joinDTO,  @RequestPart(name ="file", required = true) MultipartFile file) {
 		Boolean result = userService.join(joinDTO,file);
 		if(result) {
-		return "join success";
+		return ResponseEntity.status(200).body("가입 성공");
 		}else {
-			return "join failed";
+			return ResponseEntity.badRequest().body("가입 실패");
 		}
+//			return new ResponseDTO<>(200, "가입 성공");
+//		}else {
+//			return new ResponseDTO<>(400, "가입 실패");
+//		}
+			
 	}			
 	
+	@PostMapping("/login")
+	public ResponseEntity<?> postLogin(@RequestBody LoginDTO loginDTO) {
+		Boolean result = userService.login(loginDTO);
+		if(result) {
+			return ResponseEntity.status(200).body("로그인 성공");
+		}else {
+			return ResponseEntity.badRequest().body("로그인 실패");
+		}
+	}	
+	
+	
+	
 	@PutMapping("/updateUser/{id}")
-	public String putUpdateUser(@PathVariable(name = "id") Long id,@RequestPart("updateDTO") UpdateUserDTO updateDTO,  @RequestPart(name ="file", required = true) MultipartFile file) {
+	public ResponseEntity<?> putUpdateUser(@PathVariable(name = "id") Long id,@RequestPart("updateDTO") UpdateUserDTO updateDTO,  @RequestPart(name ="file", required = true) MultipartFile file) {
 		System.out.println("파일이름"+file);
 		Boolean result = userService.update(id,updateDTO,file);
 		if(result) {
-		return "update success";
+			return ResponseEntity.status(200).body("유저 정보 수정 성공");
 		}else {
-			return "update failed";
+			return ResponseEntity.badRequest().body("유저 정보 수정 실패");
 		}
 	}
 	
 	@DeleteMapping("/deleteUser/{id}")
-	public String deleteUser(@PathVariable(name = "id") Long id) {
+	public ResponseEntity<?>  deleteUser(@PathVariable(name = "id") Long id) {
 		Boolean result = userService.delete(id);
 		if(result) {
-		return "delete success";
+			return ResponseEntity.status(200).body("유저 정보 삭제 성공");
 		}else {
-			return "delete failed";
+			return ResponseEntity.badRequest().body("유저 정보 삭제 실패");
 		}
 	}
 	

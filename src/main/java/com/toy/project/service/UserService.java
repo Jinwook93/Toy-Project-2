@@ -2,11 +2,16 @@ package com.toy.project.service;
 
 import java.io.File;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.toy.project.dto.JoinDTO;
+import com.toy.project.dto.LoginDTO;
 import com.toy.project.dto.UpdateUserDTO;
 import com.toy.project.entity.UserEntity;
 import com.toy.project.repository.UserRepository;
@@ -22,6 +27,8 @@ public class UserService {
 
 	private final UserRepository userRepository;
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
+	private final AuthenticationManager authenticationManager;
+	
 	
 	@Transactional
 	public Boolean duplicatedEmail(String email) {
@@ -75,7 +82,16 @@ public class UserService {
 		
 		return isPresent;
 	}
-	
+
+	//로그인
+	public Boolean login(LoginDTO loginDTO) {
+	    Authentication authentication = authenticationManager.authenticate(
+	        new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
+	    );
+	    SecurityContextHolder.getContext().setAuthentication(authentication);
+	    return true;
+//	    return jwtTokenProvider.createToken(authentication);
+	}
 	
 	
 	
