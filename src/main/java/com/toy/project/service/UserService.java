@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.toy.project.dto.JoinDTO;
+import com.toy.project.dto.UpdateUserDTO;
 import com.toy.project.entity.UserEntity;
 import com.toy.project.repository.UserRepository;
 
@@ -47,4 +48,26 @@ public class UserService {
 		return true;
 		}
 	}
+	
+	@Transactional
+	public Boolean update(Long id, UpdateUserDTO updateUserDTO, MultipartFile file) {
+		
+//		Boolean isDuplicated= this.duplicatedEmail(updateUserDTO.getEmail());
+//		if(isDuplicated) {
+//			return false;
+//		}else {
+		updateUserDTO.setPassword(bCryptPasswordEncoder.encode(updateUserDTO.getPassword()));	//비밀번호 암호화
+		UserEntity updateduser = userRepository.findById(id).get();
+		updateduser.updateEntity(updateUserDTO, file);
+		userRepository.save(updateduser);
+		return true;
+//		}
+	}
+	
+	
+	
+	
+	
+	
+	
 }

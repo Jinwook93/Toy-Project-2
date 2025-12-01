@@ -30,7 +30,7 @@ public class SecurityConfig {
 		.formLogin(formLogin -> formLogin.disable())
 		.csrf(csrf -> csrf.disable())
 		.authorizeHttpRequests((auth) ->
-				auth.requestMatchers("/","/login","/join").permitAll()
+				auth.requestMatchers("/","/login","/user/**").permitAll()
 				.requestMatchers("/admin").hasRole("ADMIN")
 				.anyRequest().authenticated())
 			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));

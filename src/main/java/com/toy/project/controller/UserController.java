@@ -4,18 +4,23 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.toy.project.dto.JoinDTO;
+import com.toy.project.dto.UpdateUserDTO;
 import com.toy.project.service.UserService;
 
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 
 
 @RestController
+@RequestMapping("/user")
 @RequiredArgsConstructor
 public class UserController {
 	
@@ -37,5 +42,18 @@ public class UserController {
 		}else {
 			return "join failed";
 		}
+	}			
+	
+	@PutMapping("/updateUser/{id}")
+	public String putUpdateUser(@PathVariable(name = "id") Long id,@RequestPart("updateDTO") UpdateUserDTO updateDTO,  @RequestPart(name ="file", required = true) MultipartFile file) {
+		System.out.println("파일이름"+file);
+		Boolean result = userService.update(id,updateDTO,file);
+		if(result) {
+		return "update success";
+		}else {
+			return "update failed";
+		}
 	}
+	
+	
 }
