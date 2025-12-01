@@ -3,9 +3,6 @@ package com.toy.project.controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.toy.project.dto.JoinDTO;
-import com.toy.project.service.UserService;
-
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -13,15 +10,13 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-//@RestController
-//@RequiredArgsConstructor
-//public class UserController {
-//	
-//		private final UserService userService;
-//
-//	@PostMapping("/join")
-//	public String postJoin(@RequestBody JoinDTO joinDTO) {
-//		userService.join(joinDTO);
-//		return "join success";
-//	}
-//}
+@RestController
+public class AdminController {
+
+	
+	@GetMapping("/admin")
+	public String getAdmin() {
+		return "admin";
+	}
+	
+}
