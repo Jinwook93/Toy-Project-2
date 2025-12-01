@@ -8,4 +8,6 @@ import com.toy.project.entity.UserEntity;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
+	Boolean  existsByEmail(String email);
+
 }

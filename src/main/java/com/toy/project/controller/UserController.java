@@ -13,15 +13,26 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 
 
-//@RestController
-//@RequiredArgsConstructor
-//public class UserController {
-//	
-//		private final UserService userService;
-//
-//	@PostMapping("/join")
-//	public String postJoin(@RequestBody JoinDTO joinDTO) {
-//		userService.join(joinDTO);
-//		return "join success";
-//	}
-//}
+@RestController
+@RequiredArgsConstructor
+public class UserController {
+	
+		private final UserService userService;
+
+		
+	@GetMapping("/isDuplicatedEmail")
+	public Boolean checkEmail(String email) {
+		 Boolean result = userService.duplicatedEmail(email);
+		 return result? true : false;
+	}
+		
+	@PostMapping("/join")
+	public String postJoin(JoinDTO joinDTO) {
+		Boolean result = userService.join(joinDTO);
+		if(result) {
+		return "join success";
+		}else {
+			return "join failed";
+		}
+	}
+}

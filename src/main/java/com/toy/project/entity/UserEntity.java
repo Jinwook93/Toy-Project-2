@@ -44,6 +44,8 @@ public class UserEntity {
 	@Builder
 	public UserEntity(JoinDTO joinDTO){
 		this.email = joinDTO.getEmail();
+		this.password = joinDTO.getPassword();
+		
 		this.username = joinDTO.getUsername();
 		this.nickname = joinDTO.getNickname();
 		this.phone = joinDTO.getPhone();
