@@ -5,9 +5,14 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.toy.project.dto.JoinDTO;
 import com.toy.project.dto.UpdateUserDTO;
+import com.toy.project.entity.UserEntity;
+import com.toy.project.service.AdminService;
 import com.toy.project.service.UserService;
 
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.ObjectMapper;
+
+import java.util.List;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,7 +31,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 public class UserController {
 	
 		private final UserService userService;
-
+//		private final AdminService adminService;
+//		private final ObjectMapper objectMapper;
 		
 	@GetMapping("/isDuplicatedEmail")
 	public Boolean checkEmail(String email) {
@@ -66,5 +72,11 @@ public class UserController {
 		}
 	}
 	
+//	@GetMapping("/allMember")
+//	public String getAllMember() {
+//		List<UserEntity> allMember = adminService.getAllMember();
+//		String allMember_string = objectMapper.writeValueAsString(allMember);
+//		return allMember_string;
+//	}
 	
 }

@@ -10,7 +10,7 @@ spring:
 
   jpa:
     hibernate:
-      ddl-auto: create   # create, create-drop, update, validate 중 선택
+      ddl-auto: none   # create, create-drop, update, validate 중 선택
     show-sql: false       # SQL 로그 출력 여부
     properties:
       hibernate:

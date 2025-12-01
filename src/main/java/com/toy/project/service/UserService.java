@@ -13,6 +13,7 @@ import com.toy.project.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import tools.jackson.databind.ObjectMapper;
 
 
 @Service
@@ -20,7 +21,6 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
-	
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	
 	@Transactional
