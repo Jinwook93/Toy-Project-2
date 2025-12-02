@@ -40,8 +40,8 @@ public class JwtFilter extends OncePerRequestFilter {
 	          System.out.println("token success");
 	          
 	          
-	        //토큰에서 username과 role 획득
-	          String username = jwtUtil.getEmail(token);
+	        //토큰에서 email과 role 획득
+	          String email = jwtUtil.getEmail(token);
 	          String role = jwtUtil.getRole(token);
 	  		Boolean expired = jwtUtil.getExpired(token);
 	  		
@@ -57,7 +57,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	  		
 	  		
 	  		//userEntity를 생성하여 값 set
-	          UserEntity userEntity = new UserEntity(username,"temppassword",role);
+	          UserEntity userEntity = new UserEntity(email,"temppassword",role);
 	
 	  		//UserDetails에 회원 정보 객체 담기
 	          CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);

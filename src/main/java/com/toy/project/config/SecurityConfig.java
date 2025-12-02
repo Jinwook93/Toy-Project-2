@@ -56,7 +56,7 @@ public class SecurityConfig {
     
 	
 	@Bean
-	SecurityFilterChain apiChain(HttpSecurity http) {					//토큰을 비교 하는 필터 수행
+	SecurityFilterChain apiChain(HttpSecurity http) {					//토큰을 비교하는 필터 수행
 		http
 		.securityMatcher("/**")
 		.formLogin(formLogin -> formLogin.disable())

@@ -1,6 +1,7 @@
 package com.toy.project.service;
 
 import java.io.File;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,8 +16,10 @@ import org.springframework.web.multipart.MultipartFile;
 import com.toy.project.dto.JoinDTO;
 import com.toy.project.dto.LoginDTO;
 import com.toy.project.dto.UpdateUserDTO;
+import com.toy.project.entity.RefreshTokenEntity;
 import com.toy.project.entity.UserEntity;
 import com.toy.project.jwt.JwtUtil;
+import com.toy.project.repository.RefreshTokenRepository;
 import com.toy.project.repository.UserRepository;
 
 import jakarta.transaction.Transactional;
@@ -32,6 +35,7 @@ public class UserService {
 	private final BCryptPasswordEncoder bCryptPasswordEncoder;
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtil jwtUtil;
+	private final RefreshTokenRepository refreshTokenRepository;
 	
 	@Transactional
 	public Boolean duplicatedEmail(String email) {
@@ -76,6 +80,7 @@ public class UserService {
 
 	
 	//회원 삭제 
+	@Transactional
 	public Boolean delete(Long id) {
 		Boolean isPresent = userRepository.findById(id).isPresent();	
 			
@@ -87,6 +92,7 @@ public class UserService {
 	}
 
 	//로그인
+	@Transactional
 	public String login(LoginDTO loginDTO) {
 	    Authentication authentication = authenticationManager.authenticate(
 	        new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
@@ -104,10 +110,35 @@ public class UserService {
 	    if (role.startsWith("ROLE_")) {
 	        role = role.substring(5); // "ROLE_ADMIN" -> "ADMIN"
 	    }
+	    
+	    Boolean IsDuplicatedRefreshToken = refreshTokenRepository.findByEmail(loginDTO.getEmail()).isPresent();
+	    String refreshToken = "";
+	    
+	    
+	    if(!IsDuplicatedRefreshToken) {			//중복된 refreshToken이 없다면 토큰생성
+	    //리프레시 토큰 생성 및 저장
+	    refreshToken = jwtUtil.createRefreshToken(loginDTO.getEmail(), 7 * 24 * 60 * 60 * 1000L);
 
+	    RefreshTokenEntity refreshTokenEntity
+	    = RefreshTokenEntity.builder()
+	    .email(loginDTO.getEmail())
+	    .token(refreshToken)
+	    .expiryDate(LocalDateTime.now().plusDays(7))
+	    .deviceId("A")
+	    .build();
+	    refreshTokenRepository.save(refreshTokenEntity);
+	    }else {
+	    	refreshToken = refreshTokenRepository.findByEmail(loginDTO.getEmail()).get().getToken();
+	    }
 	    
 	    
-	    return jwtUtil.createToken(loginDTO.getEmail(),role , 60*60*1000L);
+	    
+	    
+	    
+
+	    String accessToken = jwtUtil.createAccessToken(loginDTO.getEmail(),role , 15*60*1000L);
+	    
+	    return accessToken + "===TOKEN BOUNDARY===" + refreshToken;
 	}
 	
 	

@@ -32,10 +32,21 @@ public class JwtUtil {
 	}
 
 	
-	public String createToken(String email, String role, Long expirationDate) {
+	public String createAccessToken(String email, String role, Long expirationDate) {
 		String token = Jwts.builder()
 		.claim("email", email)
 		.claim("role", role)			//ROLE_ 이 제거된 상태로 기입됨
+		.issuedAt(new Date(System.currentTimeMillis()))
+		.expiration(new Date(System.currentTimeMillis()+ expirationDate))
+		.signWith(secretKey)
+         .compact();
+		return token;
+	}
+	
+	
+	public String createRefreshToken(String email, Long expirationDate) {
+		String token = Jwts.builder()
+		.claim("email", email)
 		.issuedAt(new Date(System.currentTimeMillis()))
 		.expiration(new Date(System.currentTimeMillis()+ expirationDate))
 		.signWith(secretKey)
