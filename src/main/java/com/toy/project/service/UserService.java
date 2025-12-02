@@ -26,7 +26,6 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.ObjectMapper;
 
-
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -36,41 +35,41 @@ public class UserService {
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtil jwtUtil;
 	private final RefreshTokenRepository refreshTokenRepository;
-	
+
 	@Transactional
 	public Boolean duplicatedEmail(String email) {
-		
-		Boolean isDuplicated  = userRepository.existsByEmail(email);
-		if(isDuplicated) {
+
+		Boolean isDuplicated = userRepository.existsByEmail(email);
+		if (isDuplicated) {
 			return true;
-		}else {
+		} else {
 			return false;
 		}
-		
+
 	}
-	
+
 	@Transactional
 	public Boolean join(JoinDTO joinDTO, MultipartFile file) {
-		
-		Boolean isDuplicated= this.duplicatedEmail(joinDTO.getEmail());
-		if(isDuplicated) {
+
+		Boolean isDuplicated = this.duplicatedEmail(joinDTO.getEmail());
+		if (isDuplicated) {
 			return false;
-		}else {
-		joinDTO.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword()));	//비밀번호 암호화
-		UserEntity newuser = new UserEntity(joinDTO,file);
-		userRepository.save(newuser);
-		return true;
+		} else {
+			joinDTO.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword())); // 비밀번호 암호화
+			UserEntity newuser = new UserEntity(joinDTO, file);
+			userRepository.save(newuser);
+			return true;
 		}
 	}
-	
+
 	@Transactional
 	public Boolean update(Long id, UpdateUserDTO updateUserDTO, MultipartFile file) {
-		
+
 //		Boolean isDuplicated= this.duplicatedEmail(updateUserDTO.getEmail());
 //		if(isDuplicated) {
 //			return false;
 //		}else {
-		updateUserDTO.setPassword(bCryptPasswordEncoder.encode(updateUserDTO.getPassword()));	//비밀번호 암호화
+		updateUserDTO.setPassword(bCryptPasswordEncoder.encode(updateUserDTO.getPassword())); // 비밀번호 암호화
 		UserEntity updateduser = userRepository.findById(id).get();
 		updateduser.updateEntity(updateUserDTO, file);
 		userRepository.save(updateduser);
@@ -78,72 +77,69 @@ public class UserService {
 //		}
 	}
 
-	
-	//회원 삭제 
+	// 회원 삭제
 	@Transactional
 	public Boolean delete(Long id) {
-		Boolean isPresent = userRepository.findById(id).isPresent();	
-			
-		if(isPresent) {
+		Boolean isPresent = userRepository.findById(id).isPresent();
+
+		if (isPresent) {
 			userRepository.deleteById(id);
 		}
-		
+
 		return isPresent;
 	}
 
-	//로그인
+	// 로그인
 	@Transactional
 	public String login(LoginDTO loginDTO) {
-	    Authentication authentication = authenticationManager.authenticate(
-	        new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword())
-	    );
-	    SecurityContextHolder.getContext().setAuthentication(authentication);
+		Authentication authentication = authenticationManager
+				.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
+		SecurityContextHolder.getContext().setAuthentication(authentication);
 
-	    
-	    // 권한(Role) 추출
-	    String role = authentication.getAuthorities().stream()
-	        .map(GrantedAuthority::getAuthority)
-	        .findFirst()   // 여러 권한이 있을 경우 첫 번째만 사용
-	        .orElse("ROLE_USER");
-	    
-	 // ROLE_ 제거 후 JWT에 저장
-	    if (role.startsWith("ROLE_")) {
-	        role = role.substring(5); // "ROLE_ADMIN" -> "ADMIN"
-	    }
-	    
-	    Boolean IsDuplicatedRefreshToken = refreshTokenRepository.findByEmail(loginDTO.getEmail()).isPresent();
-	    String refreshToken = "";
-	    
-	    
-	    if(!IsDuplicatedRefreshToken) {			//중복된 refreshToken이 없다면 토큰생성
-	    //리프레시 토큰 생성 및 저장
-	    refreshToken = jwtUtil.createRefreshToken(loginDTO.getEmail(), 7 * 24 * 60 * 60 * 1000L);
+		// 권한(Role) 추출
+		String role = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).findFirst() // 여러 권한이
+																												// 있을 경우
+																												// 첫 번째만
+																												// 사용
+				.orElse("ROLE_USER");
 
-	    RefreshTokenEntity refreshTokenEntity
-	    = RefreshTokenEntity.builder()
-	    .email(loginDTO.getEmail())
-	    .token(refreshToken)
-	    .expiryDate(LocalDateTime.now().plusDays(7))
-	    .deviceId("A")
-	    .build();
-	    refreshTokenRepository.save(refreshTokenEntity);
-	    }else {
-	    	refreshToken = refreshTokenRepository.findByEmail(loginDTO.getEmail()).get().getToken();
-	    }
-	    
-	    
-	    
-	    
-	    
+		// ROLE_ 제거 후 JWT에 저장
+		if (role.startsWith("ROLE_")) {
+			role = role.substring(5); // "ROLE_ADMIN" -> "ADMIN"
+		}
 
-	    String accessToken = jwtUtil.createAccessToken(loginDTO.getEmail(),role , 15*60*1000L);
-	    
-	    return accessToken + "===TOKEN BOUNDARY===" + refreshToken;
+		Optional<RefreshTokenEntity> searchRefreshTokenEntity = refreshTokenRepository.findByEmail(loginDTO.getEmail());
+
+		Boolean IsDuplicatedRefreshToken = searchRefreshTokenEntity.isPresent();
+		String refreshToken = "";
+
+		if (!IsDuplicatedRefreshToken) { // 중복된 refreshToken이 없다면 토큰생성
+			// 리프레시 토큰 생성 및 저장
+			refreshToken = jwtUtil.createRefreshToken(loginDTO.getEmail(), 7 * 24 * 60 * 60 * 1000L);
+
+			RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder().email(loginDTO.getEmail())
+					.token(refreshToken).expiryDate(LocalDateTime.now().plusDays(7)).deviceId("A").build();
+			refreshTokenRepository.save(refreshTokenEntity);
+		} else {
+			refreshToken = searchRefreshTokenEntity.get().getToken();
+
+			// refreshToken이 있어도 만료된 경우 삭제
+			Boolean IsExpiredToken = jwtUtil.getExpired(refreshToken);
+			if (IsExpiredToken) {
+				refreshTokenRepository.deleteByEmail(loginDTO.getEmail());
+				// 리프레시 토큰 생성 및 저장
+				refreshToken = jwtUtil.createRefreshToken(loginDTO.getEmail(), 7 * 24 * 60 * 60 * 1000L);
+
+				RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder().email(loginDTO.getEmail())
+						.token(refreshToken).expiryDate(LocalDateTime.now().plusDays(7)).deviceId("A").build();
+				refreshTokenRepository.save(refreshTokenEntity);
+			}
+
+		}
+
+		String accessToken = jwtUtil.createAccessToken(loginDTO.getEmail(), role, 15 * 60 * 1000L);
+
+		return accessToken + "===TOKEN BOUNDARY===" + refreshToken;
 	}
-	
-	
-	
-	
-	
-	
+
 }

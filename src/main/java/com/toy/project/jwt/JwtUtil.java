@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.toy.project.entity.UserEntity;
+import com.toy.project.repository.RefreshTokenRepository;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -79,4 +80,14 @@ public class JwtUtil {
 	public Boolean getExpired(String token) {
 		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
 	}
+	
+	
+//	public void deleteRefreshToken(String token) {
+//		if(this.getExpired(token)) {
+//			RefreshTokenRepository.delete
+//		}
+//	}
+	
+	
+	
 }
