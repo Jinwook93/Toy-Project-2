@@ -1,0 +1,32 @@
+// userAPI.jsx
+const BASE_URL = "http://localhost:8080";
+
+export async function loginUser(email, password) {
+  const response = await fetch(`${BASE_URL}/user/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    throw new Error("로그인 실패!!!!!!!!");
+  }
+   return response; // { token: "JWT..." }
+//   const token = response.headers.get("Authorization");
+//    const refreshtoken = response.headers.get("Refresh-Token"); 
+//    return token;
+}
+
+export async function registerUser(email, password) {
+  const response = await fetch(`${BASE_URL}/user/join`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  });
+
+  if (!response.ok) {
+    throw new Error("회원가입 실패");
+  }
+  return response.json();
+
+}

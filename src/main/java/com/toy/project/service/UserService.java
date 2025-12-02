@@ -97,10 +97,8 @@ public class UserService {
 		SecurityContextHolder.getContext().setAuthentication(authentication);
 
 		// 권한(Role) 추출
-		String role = authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).findFirst() // 여러 권한이
-																												// 있을 경우
-																												// 첫 번째만
-																												// 사용
+		String role = authentication.getAuthorities().stream()
+				.map(GrantedAuthority::getAuthority).findFirst() // 여러 권한이 있을 경우 첫 번째만 사용
 				.orElse("ROLE_USER");
 
 		// ROLE_ 제거 후 JWT에 저장

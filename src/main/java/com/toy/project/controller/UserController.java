@@ -61,13 +61,12 @@ public class UserController {
 		String result = userService.login(loginDTO);
 		String accessToken = result.split("===TOKEN BOUNDARY===")[0];
 		String refreshToken = result.split("===TOKEN BOUNDARY===")[1];
-		
 		if (accessToken != null && !accessToken.isEmpty() &&
 		        refreshToken != null && !refreshToken.isEmpty())  {
 			return ResponseEntity.status(200)
 					.header("Authorization", "Bearer " + accessToken) // 헤더에 토큰 추가
 					 .header("Refresh-Token", refreshToken)
-					.body("로그인 성공");
+					.body(loginDTO.getEmail());
 		}else {
 			return ResponseEntity.badRequest().body("로그인 실패");
 		}

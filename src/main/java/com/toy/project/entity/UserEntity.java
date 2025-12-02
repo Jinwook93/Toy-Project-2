@@ -50,6 +50,9 @@ public class UserEntity {
 	@CreationTimestamp
 	Date makingTime;
 	
+	// 소셜 로그인일 경우 provider 정보 저장
+//    private String provider; // GOOGLE, NAVER, KAKAO 등
+
 	
 	//회원 임시 로그인 (Stateless)
 	public UserEntity(String email, String password, String role){
