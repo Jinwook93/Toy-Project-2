@@ -173,7 +173,7 @@ public class UserService {
 //	}
 	
 	
-	//@Pathvariable 없이
+	//@Pathvariable 없이 token으로 값 확인
 	@Transactional
 	public UserInfoDTO getLoginUserInfo(String token) {
 			String role = jwtUtil.getRole(token);
@@ -207,6 +207,32 @@ public class UserService {
 			
 
 	}
+	
+	
+	
+	//로그아웃
+	
+//	@Transactional
+//	public Boolean logout(Long id, String token) {
+//	    UserEntity userEntity = userRepository.findById(id).orElseThrow();
+//	    if(userEntity.getEmail().equals(jwtUtil.getEmail(token))) {
+//	    	refreshTokenRepository.deleteByEmail(email); //로그아웃 시 리프레시 토큰 삭제
+//	    	return true;
+//	    }else {
+//	    	return false;
+//	    }
+//	}
+
+	@Transactional
+	public Boolean logout(String token) {
+	
+			String email = jwtUtil.getEmail(token.replace("Bearer ", ""));
+			System.out.println(email);
+	    	refreshTokenRepository.deleteByEmail(email); //로그아웃 시 리프레시 토큰 삭제
+	    	return true;
+	}
+
+	
 	
 	
 	

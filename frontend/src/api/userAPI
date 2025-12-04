@@ -79,20 +79,6 @@ export const getLoginUserInfo = async () => {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //회원수정
 export const updateUser = async (user, profile) => {
   try {
@@ -163,5 +149,59 @@ export const deleteUser = async (id, navigate, setIsLogin) => {
   }
 };
 
+//로그아웃
+// export const logoutUser = async (id, setIsLogin ) => {
+
+//     try{
+//     const response = await fetch(`/user/logout/${Number(id)}`, {
+//     method: "POST",
+//     headers: {
+//     "Authorization": "Bearer " + localStorage.getItem("jwt")
+//         }
+//         });
+//      if (!response.ok) {
+//       throw new Error("로그아웃 실패");
+//          }
+//         const result = await response.text();
+//         alert(result);
+//          props.setIsLogin(false);
+//         localStorage.removeItem("jwt");
+//         localStorage.removeItem("refreshJwt");
+//         navigate("/");
 
 
+//         }catch (error){
+
+//       console.error("로그아웃 에러:", error);
+//     throw error;
+//         }
+    
+// };
+
+export const logoutUser = async (setIsLogin) => {
+
+    try{
+    const response = await fetch(`${BASE_URL}/user/logout`, {
+    method: "POST",
+    headers: {
+    "Authorization": "Bearer " + localStorage.getItem("jwt")
+        }
+        });
+     if (!response.ok) {
+      throw new Error("로그아웃 실패");
+         }
+        const result = await response.text();
+        alert(result);
+         setIsLogin(false);
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("refreshJwt");
+        navigate("/");
+
+
+        }catch (error){
+
+      console.error("로그아웃 에러:", error);
+    throw error;
+        }
+    
+};

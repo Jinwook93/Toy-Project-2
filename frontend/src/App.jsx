@@ -17,7 +17,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-      <Header  username={userName} isLogin={isLogin} id = {id}/>
+      <Header  username={userName} isLogin={isLogin} id = {id} setIsLogin = {setIsLogin}/>
         <UserRouter setUserName={setUserName} setIsLogin={setIsLogin} />
         <HomeRouter isLogin ={isLogin} id ={id}/>
         <Footer/> 

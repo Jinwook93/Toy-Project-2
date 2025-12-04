@@ -46,6 +46,8 @@ const UpdateUser = (props) => {
       if (response.ok) {
         alert("유저 정보 수정 성공"); // "유저 정보 수정 성공"
         props.setIsLogin(false);
+        localStorage.removeItem("jwt");
+        localStorage.removeItem("refreshJwt");
         navigate("/");
       } else {
         alert("유저 정보 수정 실패"); // "유저 정보 수정 실패"
