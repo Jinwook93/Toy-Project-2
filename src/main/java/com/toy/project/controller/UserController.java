@@ -42,7 +42,7 @@ public class UserController {
 	}
 		
 	@PostMapping("/join")
-	public  ResponseEntity<?>  postJoin(@RequestPart("joinDTO") JoinDTO joinDTO,  @RequestPart(name ="file", required = true) MultipartFile file) {
+	public  ResponseEntity<?>  postJoin(@RequestPart("joinDTO") JoinDTO joinDTO,  @RequestPart(name ="file", required = false) MultipartFile file) {
 		Boolean result = userService.join(joinDTO,file);
 		if(result) {
 		return ResponseEntity.status(200).body("가입 성공");

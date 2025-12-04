@@ -12,21 +12,37 @@ export async function loginUser(email, password) {
     throw new Error("로그인 실패!!!!!!!!");
   }
    return response; // { token: "JWT..." }
-//   const token = response.headers.get("Authorization");
-//    const refreshtoken = response.headers.get("Refresh-Token"); 
-//    return token;
+
 }
 
-export async function registerUser(email, password) {
-  const response = await fetch(`${BASE_URL}/user/join`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ email, password }),
-  });
+export const registerUser = async (user, profile) => {
+  try {
+    const formData = new FormData();
 
-  if (!response.ok) {
-    throw new Error("회원가입 실패");
+    // joinDTO는 JSON 문자열로 변환해서 담아야 함
+    formData.append(
+      "joinDTO",
+      new Blob([JSON.stringify(user)], { type: "application/json" })        //Blob은 type으로 지정해야 함. Http 헤더의 Content-Type이 아니며, 지정을 안할시 text/plain으로 인식 
+    );
+
+    // file은 MultipartFile로 받으므로 그대로 append
+    formData.append("file", profile);
+
+    const response = await fetch(`${BASE_URL}/user/join`, {
+      method: "POST",
+      body: formData,
+    });
+        
+
+
+    if (!response.ok) {
+      throw new Error("회원가입 실패");
+    }
+
+    return response;
+  } catch (error) {
+    console.error("회원가입 에러:", error);
+    throw error;
   }
-  return response.json();
+};
 
-}

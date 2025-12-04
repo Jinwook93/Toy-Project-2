@@ -1,11 +1,15 @@
 import React, { useState } from "react";
-import { loginUser, registerUser } from "./api/userAPI";
+import { loginUser, registerUser } from "../api/userAPI";
+import Header from "../components/Header";
+import { Link, useNavigate } from "react-router-dom";
 
-const Home = () => {
+const Login = ({setIsLogin, setUserName}) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [isLogin, setIsLogin] = useState(false);
-  const [userName, setUserName] = useState("");
+  // const [isLogin, setIsLogin] = useState(false);
+  // const [userName, setUserName] = useState("");
+  const navigate = useNavigate();   // ✅ 훅을 최상단에서 호출
+
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,9 +23,9 @@ const Home = () => {
       // body 읽기
       const loggedUser = await response.text();
       setUserName(loggedUser);
-
-      alert("로그인 성공!");
       setIsLogin(true);
+      alert("로그인 성공!");
+      navigate("/");
     } catch (err) {
       alert("로그인 실패");
     }
@@ -29,7 +33,7 @@ const Home = () => {
 
   return (
     <div>
-      <h2>안녕하세요, {isLogin ? userName : "anonymousUser"}님</h2>
+
 
       <form onSubmit={handleLogin}>
         <h3>로그인</h3>
@@ -47,8 +51,9 @@ const Home = () => {
         />
         <button type="submit">로그인</button>
       </form>
+      <Link to={"/join"}>회원가입</Link>
     </div>
   );
 };
 
-export default Home;
+export default Login;

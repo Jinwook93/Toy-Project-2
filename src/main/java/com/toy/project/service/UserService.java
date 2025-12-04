@@ -38,15 +38,9 @@ public class UserService {
 
 	@Transactional
 	public Boolean duplicatedEmail(String email) {
-
-		Boolean isDuplicated = userRepository.existsByEmail(email);
-		if (isDuplicated) {
-			return true;
-		} else {
-			return false;
-		}
-
+	    return userRepository.existsByEmail(email);
 	}
+
 
 	@Transactional
 	public Boolean join(JoinDTO joinDTO, MultipartFile file) {
