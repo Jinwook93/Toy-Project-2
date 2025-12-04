@@ -6,7 +6,7 @@ import Home from '../pages/Home';
 const HomeRouter = (props) => {
     return (
       <Routes>
-      <Route path="/" element={<Home isLogin={props.isLogin} />} />
+      <Route path="/" element={<Home id = {props.id} isLogin={props.isLogin} />} />
     </Routes>
 
   

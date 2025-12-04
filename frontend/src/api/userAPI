@@ -1,6 +1,8 @@
 // userAPI.jsx
 const BASE_URL = "http://localhost:8080";
 
+
+//로그인
 export async function loginUser(email, password) {
   const response = await fetch(`${BASE_URL}/user/login`, {
     method: "POST",
@@ -15,6 +17,7 @@ export async function loginUser(email, password) {
 
 }
 
+//회원가입
 export const registerUser = async (user, profile) => {
   try {
     const formData = new FormData();
@@ -45,4 +48,92 @@ export const registerUser = async (user, profile) => {
     throw error;
   }
 };
+
+//마이페이지
+export const getLoginUserInfo = async () => {
+  try {
+    const response = await fetch(`${BASE_URL}/user/getLoginUser`, {
+      method: "GET",
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("jwt"),
+        "Content-Type": "application/json"
+      }
+    });
+
+    if (!response.ok) {
+      // 실패 시 JSON이 없을 수 있으므로 text로 받아서 에러 처리
+      const errorText = await response.text();
+      throw new Error(errorText || "유저 정보를 가져오지 못했습니다.");
+    }
+
+    const data = await response.json(); // 성공 시 JSON 파싱
+    return data;
+  } catch (error) {
+    console.error("유저 정보를 불러오지 못했습니다:", error);
+    throw error; // 호출한 컴포넌트에서 catch 가능
+  }
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//회원수정
+export const updateUser = async (user, profile) => {
+    console.log("아이디"+ user.id);
+  try {
+    const formData = new FormData();
+
+    // joinDTO는 JSON 문자열로 변환해서 담아야 함
+    formData.append(
+      "updateDTO",
+      new Blob([JSON.stringify(user)], { type: "application/json" })        //Blob은 type으로 지정해야 함. Http 헤더의 Content-Type이 아니며, 지정을 안할시 text/plain으로 인식 
+    );
+
+    // file은 MultipartFile로 받으므로 그대로 append
+    formData.append("file", profile);
+
+    const response = await fetch(`${BASE_URL}/user/updateUser/${user.id}`, {
+      method: "PUT",
+      headers: {
+        "Authorization": "Bearer " + localStorage.getItem("jwt")
+        },
+      body: formData
+
+    });
+        
+
+
+    if (!response.ok) {
+      throw new Error("회원수정 실패");
+    }
+
+    return response;
+  } catch (error) {
+    console.error("회원수정 에러:", error);
+    throw error;
+  }
+};
+
+
+
+
+
+
+
 

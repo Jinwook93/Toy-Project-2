@@ -115,6 +115,8 @@ const Join = () => {
           name="role"
           onChange={handleChange}  
         /> */}
+
+
        <select
          name="role"
          value={user.role}
@@ -124,6 +126,12 @@ const Join = () => {
         <option value="USER">사용자</option>
            <option value="ADMIN">관리자</option>
         </select>
+
+
+{/* <select name="role" value={user.role || "USER"} onChange={handleChange}>
+  <option value="USER">사용자</option>
+  <option value="ADMIN">관리자</option>
+</select> */}
 
 
 

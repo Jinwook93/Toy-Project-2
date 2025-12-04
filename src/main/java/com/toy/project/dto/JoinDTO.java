@@ -7,7 +7,7 @@ import lombok.Data;
 public class JoinDTO {
 	String email;
 	String password;
-	String password_check;
+//	String password_check;
 
 	String username;
 	String nickname;

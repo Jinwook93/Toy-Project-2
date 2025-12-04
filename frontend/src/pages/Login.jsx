@@ -17,7 +17,7 @@ const Login = ({setIsLogin, setUserName}) => {
       const response = await loginUser(email, password); // Response 객체
 
       // 헤더 저장
-      localStorage.setItem("jwt", response.headers.get("Authorization"));
+      localStorage.setItem("jwt", response.headers.get("Authorization").replace("Bearer ", ""));
       localStorage.setItem("refreshJwt", response.headers.get("Refresh-Token"));
 
       // body 읽기

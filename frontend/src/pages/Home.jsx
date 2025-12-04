@@ -7,7 +7,9 @@ const Home = ({isLogin}) => {
 
   return (
     <div>
-    <Link to={"/login"}>로그인</Link>
+   {isLogin?"":<Link to={"/login"}>로그인</Link>}
+  {isLogin?<Link to={`/getLoginUserInfo`}>회원정보</Link> :""} 
+    {/* {isLogin?<Link to={`/updateuser/${id}`}>회원수정</Link> :""} */}
     {isLogin? "":<Link to={"/join"}>회원가입</Link>}
     </div>
     

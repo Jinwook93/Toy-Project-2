@@ -7,6 +7,7 @@ import com.toy.project.dto.JoinDTO;
 import com.toy.project.dto.LoginDTO;
 import com.toy.project.dto.ResponseDTO;
 import com.toy.project.dto.UpdateUserDTO;
+import com.toy.project.dto.UserInfoDTO;
 import com.toy.project.entity.UserEntity;
 import com.toy.project.service.AdminService;
 import com.toy.project.service.UserService;
@@ -14,7 +15,9 @@ import com.toy.project.service.UserService;
 import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.ObjectMapper;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,6 +26,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
@@ -75,7 +79,7 @@ public class UserController {
 	
 	
 	@PutMapping("/updateUser/{id}")
-	public ResponseEntity<?> putUpdateUser(@PathVariable(name = "id") Long id,@RequestPart("updateDTO") UpdateUserDTO updateDTO,  @RequestPart(name ="file", required = true) MultipartFile file) {
+	public ResponseEntity<?> putUpdateUser(@PathVariable(name = "id") Long id,@RequestPart("updateDTO") UpdateUserDTO updateDTO,  @RequestPart(name ="file", required = false) MultipartFile file) {
 		System.out.println("파일이름"+file);
 		Boolean result = userService.update(id,updateDTO,file);
 		if(result) {
@@ -95,6 +99,41 @@ public class UserController {
 		}
 	}
 	
+//	//회원정보
+//	@GetMapping("/getLoginUser/{id}")
+//	public  ResponseEntity<?> getLoginUser(@PathVariable(name = "id") Long id,  @RequestHeader("Authorization") String token) {
+//		if(token.startsWith("Bearer ") && token != null) {
+//			token = token.split(" ")[1];
+//		}
+//		
+//		
+//		//UserInfoDTO  userInfoDTO = userService.getLoginUserInfo(id,token);
+//		UserInfoDTO  userInfoDTO = userService.getLoginUserInfo(id,token);
+//		if(userInfoDTO != null) {
+//			return ResponseEntity.status(200).body(userInfoDTO);
+//		}else {
+//			return ResponseEntity.badRequest().body(userInfoDTO);
+//		}
+//	}
+	
+	//회원정보
+	@GetMapping("/getLoginUser")										//보안상 @Pathvariable을 안쓰고 토큰만 조회하도록 함 
+	public  ResponseEntity<?> getLoginUser(@RequestHeader("Authorization") String token) {
+		if(token.startsWith("Bearer ") && token != null) {
+			token = token.split(" ")[1];
+		}
+		
+		//UserInfoDTO  userInfoDTO = userService.getLoginUserInfo(id,token);
+		UserInfoDTO  userInfoDTO = userService.getLoginUserInfo(token);
+		if(userInfoDTO != null) {
+			System.out.println("프로필:"+userInfoDTO.getProfile());
+			return ResponseEntity.status(200).body(userInfoDTO);
+		}else {
+	        Map<String, String> error = new HashMap<>();
+	        error.put("message", "유저 정보를 찾을 수 없습니다.");
+			return ResponseEntity.badRequest().body(error);
+		}
+	}
 
 	
 }

@@ -11,15 +11,15 @@ import Footer from './components/Footer'
 function App() {
   const [userName, setUserName] = useState("");   // 추가
   const [isLogin, setIsLogin] = useState(false);  // 추가
-
+  const [id, setId] = useState(null);  //회원 식별번호
 
 
   return (
     <>
       <BrowserRouter>
-      <Header  username={userName} isLogin={isLogin}/>
+      <Header  username={userName} isLogin={isLogin} id = {id}/>
         <UserRouter setUserName={setUserName} setIsLogin={setIsLogin} />
-        <HomeRouter isLogin ={isLogin} />
+        <HomeRouter isLogin ={isLogin} id ={id}/>
         <Footer/> 
       </BrowserRouter>
     </>

@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.toy.project.dto.JoinDTO;
 import com.toy.project.dto.LoginDTO;
 import com.toy.project.dto.UpdateUserDTO;
+import com.toy.project.dto.UserInfoDTO;
 import com.toy.project.entity.RefreshTokenEntity;
 import com.toy.project.entity.UserEntity;
 import com.toy.project.jwt.JwtUtil;
@@ -44,12 +45,13 @@ public class UserService {
 
 	@Transactional
 	public Boolean join(JoinDTO joinDTO, MultipartFile file) {
-
+		System.out.println("여기까지?");
 		Boolean isDuplicated = this.duplicatedEmail(joinDTO.getEmail());
 		if (isDuplicated) {
 			return false;
 		} else {
 			joinDTO.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword())); // 비밀번호 암호화
+			
 			UserEntity newuser = new UserEntity(joinDTO, file);
 			userRepository.save(newuser);
 			return true;
@@ -134,4 +136,78 @@ public class UserService {
 		return accessToken + "===TOKEN BOUNDARY===" + refreshToken;
 	}
 
+
+//@Pathvariable 사용하여 id 식별번호를 비교
+//	@Transactional
+//	public UserInfoDTO getLoginUserInfo(Long id,String token) {
+//			String role = jwtUtil.getRole(token);
+//			String email = jwtUtil.getEmail(token);
+//			Optional<UserEntity> userEntity =userRepository.findByEmail(email);
+//			
+//			
+//			if(!userEntity.isPresent()) {
+//				return null;
+//			}
+//			UserInfoDTO userInfoDTO = new UserInfoDTO(); //로그인한 유저
+//			if(id != userEntity.get().getId()) {
+//				System.out.println("조회한 식별번호와 토큰 정보와 같지 않음");
+//				return null;
+//			}
+//			
+//			
+//			System.out.println("ROLE_ADMIN::: "+ jwtUtil.getRole(token));
+//			userInfoDTO.UserEntityToUserInfoDTO(userEntity);
+//			  // ADMIN은 모든 유저 조회 가능
+//		    if ("ADMIN".equals(role)) {
+//		        return userInfoDTO;
+//		    }
+//
+//		    // USER는 토큰의 이메일과 DB의 이메일이 같을 때만 조회 가능
+//		    if ("USER".equals(role) && userEntity.get().getEmail().equals(email)) {
+//		        return userInfoDTO;
+//		    }
+//			return null;
+//
+//			
+//
+//	}
+	
+	
+	//@Pathvariable 없이
+	@Transactional
+	public UserInfoDTO getLoginUserInfo(String token) {
+			String role = jwtUtil.getRole(token);
+			String email = jwtUtil.getEmail(token);
+			Optional<UserEntity> userEntity =userRepository.findByEmail(email);
+			
+		
+			if(!userEntity.isPresent()) {
+				return null;
+			}
+			UserInfoDTO userInfoDTO = new UserInfoDTO(); //로그인한 유저
+//			if(id != userEntity.get().getId()) {
+//				System.out.println("조회한 식별번호와 토큰 정보와 같지 않음");
+//				return null;
+//			}
+			
+			
+			System.out.println("ROLE_ADMIN::: "+ jwtUtil.getRole(token));
+			userInfoDTO.UserEntityToUserInfoDTO(userEntity);
+			  // ADMIN은 모든 유저 조회 가능
+		    if ("ADMIN".equals(role)) {
+		        return userInfoDTO;
+		    }
+
+		    // USER는 토큰의 이메일과 DB의 이메일이 같을 때만 조회 가능
+		    if ("USER".equals(role) && userEntity.get().getEmail().equals(email)) {
+		        return userInfoDTO;
+		    }
+			return null;
+
+			
+
+	}
+	
+	
+	
 }
