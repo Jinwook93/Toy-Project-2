@@ -16,7 +16,7 @@ public class UpdateUserDTO {
 	String address;
 	
 //	String profile;
-	@Lob
+	//@Lob
     private byte[] profile;  // BLOB으로 매핑됨
 	
 	String role;

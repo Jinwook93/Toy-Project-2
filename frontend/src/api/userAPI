@@ -95,7 +95,6 @@ export const getLoginUserInfo = async () => {
 
 //회원수정
 export const updateUser = async (user, profile) => {
-    console.log("아이디"+ user.id);
   try {
     const formData = new FormData();
 
@@ -107,7 +106,6 @@ export const updateUser = async (user, profile) => {
 
     // file은 MultipartFile로 받으므로 그대로 append
     formData.append("file", profile);
-
     const response = await fetch(`${BASE_URL}/user/updateUser/${user.id}`, {
       method: "PUT",
       headers: {

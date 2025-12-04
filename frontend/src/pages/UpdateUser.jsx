@@ -2,9 +2,9 @@ import React, { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { getLoginUserInfo, updateUser } from "../api/userAPI";
 
-const UpdateUser = () => {
+const UpdateUser = (props) => {
   const [userInfo, setUserInfo] =  useState(null);
-  //const [profile, setProfile] = useState(null);
+  const [profile, setProfile] = useState(null);
 
 
 
@@ -38,12 +38,14 @@ const UpdateUser = () => {
     // }
 
     try {
-      console.log("아이디:"+ userInfo.id);
-      const response = await updateUser(userInfo, userInfo.profile);
+    
+  
+      const response = await updateUser(userInfo, profile);
     //  const updateMessage = await response.text();
 
       if (response.ok) {
         alert("유저 정보 수정 성공"); // "유저 정보 수정 성공"
+        props.setIsLogin(false);
         navigate("/");
       } else {
         alert("유저 정보 수정 실패"); // "유저 정보 수정 실패"

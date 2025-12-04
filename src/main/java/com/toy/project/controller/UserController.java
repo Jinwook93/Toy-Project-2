@@ -80,7 +80,7 @@ public class UserController {
 	
 	@PutMapping("/updateUser/{id}")
 	public ResponseEntity<?> putUpdateUser(@PathVariable(name = "id") Long id,@RequestPart("updateDTO") UpdateUserDTO updateDTO,  @RequestPart(name ="file", required = false) MultipartFile file) {
-		System.out.println("파일이름"+file);
+		System.out.println("파일 이름 ==========: "+file);
 		Boolean result = userService.update(id,updateDTO,file);
 		if(result) {
 			return ResponseEntity.status(200).body("유저 정보 수정 성공");
