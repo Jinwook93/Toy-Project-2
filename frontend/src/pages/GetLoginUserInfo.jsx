@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { getLoginUserInfo } from "../api/userAPI";
-import { Link } from 'react-router-dom';
+import { getLoginUserInfo, deleteUser } from "../api/userAPI";
+import { Link, useNavigate } from 'react-router-dom';
 
-const GetLoginUserInfo = () => {
+const GetLoginUserInfo = (props) => {
   const [userInfo, setUserInfo] = useState(null);
-
+    const navigate = useNavigate();
   useEffect(() => {
     const fetchUserInfo = async () => {
       try {
@@ -35,8 +35,9 @@ const GetLoginUserInfo = () => {
              src={`data:image/png;base64,${userInfo.profile}`} 
             alt="프로필 이미지" 
             /></p>
-
+        
           <Link to={`/updateuser/${userInfo.id}`}>회원정보 수정</Link> 
+          <button type ="button" onClick={() => deleteUser(userInfo.id, navigate, props.setIsLogin)}>회원정보 삭제</button> 
         </div>
       ) : (
         <p>로딩 중...</p>

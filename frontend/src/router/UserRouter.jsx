@@ -11,7 +11,7 @@ const UserRouter = ({setUserName,setIsLogin, id, user, file}) => {
         <Routes>
         <Route path="/login" element={<Login setUserName={setUserName} setIsLogin={setIsLogin}/>} />
         <Route path="/join" element={<Join />} />
-        <Route path="/getLoginUserInfo" element={<GetLoginUserInfo/>} />
+        <Route path="/getLoginUserInfo" element={<GetLoginUserInfo setIsLogin={setIsLogin}/>} />
          <Route path="/updateuser/:id" element={<UpdateUser />} /> 
       </Routes>
   
