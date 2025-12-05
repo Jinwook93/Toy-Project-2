@@ -39,11 +39,16 @@ public class UserController {
 	private final UserService userService;
 
 	@GetMapping("/isDuplicateEmail")
-	public Boolean checkEmail(@RequestParam(name = "email") String email) {
-		System.out.println("이메일:"+ email);
+	public Boolean checkEmail(@RequestParam(name = "email") String email) {//`${BASE_URL}/user/isDuplicateEmail?email=${encodeURIComponent(email)}`
 		Boolean result = userService.duplicatedEmail(email);
-		System.out.println("result:"+result);
-		return result ? true : false;
+		return result ? true : false;			//JSON으로 인식
+	}
+	
+	
+	@GetMapping("/isDuplicateNickname")
+	public Boolean checkNickname(@RequestParam(name = "nickname") String nickname) { //`${BASE_URL}/user/isDuplicateNickname?nickname=${encodeURIComponent(nickname)}`
+		Boolean result = userService.duplicatedNickname(nickname);
+		return result ? true : false;			//JSON으로 인식
 	}
 
 	@PostMapping("/join")

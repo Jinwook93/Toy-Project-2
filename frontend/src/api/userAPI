@@ -178,7 +178,7 @@ export const deleteUser = async (id, navigate, setIsLogin) => {
     
 // };
 
-export const logoutUser = async (setIsLogin) => {
+export const logoutUser = async (setIsLogin, navigate) => {
 
     try{
     const response = await fetch(`${BASE_URL}/user/logout`, {
@@ -195,7 +195,7 @@ export const logoutUser = async (setIsLogin) => {
          setIsLogin(false);
         localStorage.removeItem("jwt");
         localStorage.removeItem("refreshJwt");
-        navigate("/");
+        navigate("/login");
 
 
         }catch (error){
@@ -240,6 +240,46 @@ export const isDuplicateEmail = async (email, isFinalVerification) => {
         }catch (error){
 
       console.error("이메일 검증 에러:", error);
+    throw error;
+        }
+    
+};
+
+
+//중복 닉네임 확인
+export const isDuplicateNickname = async (nickname, isFinalVerification) => {
+                                                    //  isFinalVerification  // 최종 검증
+    try{
+    const response = await fetch(`${BASE_URL}/user/isDuplicateNickname?nickname=${encodeURIComponent(nickname)}`, {
+    method: "GET",
+    headers: {
+    "Authorization": "Bearer " + localStorage.getItem("jwt")
+        }} );
+     if (!response.ok) {
+      throw new Error("중복 닉네임 실패");
+         }
+        const result = await response.json();   //Boolean도 JSON()
+        
+
+        if(!isFinalVerification){
+        if(result == true){
+          alert("중복된 닉네임입니다")
+        }else{
+          alert("사용가능한 닉네임입니다")      //최종검증이 true 일 시에는 출력이 되지 않도록 함
+        }
+        }else{
+           if(result == true){
+          alert("중복된 닉네임입니다")
+        }
+        }
+
+
+      return result;
+
+
+        }catch (error){
+
+      console.error("닉네임 검증 에러:", error);
     throw error;
         }
     

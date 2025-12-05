@@ -42,12 +42,18 @@ public class UserService {
 	    return userRepository.existsByEmail(email);
 	}
 
+	@Transactional
+	public Boolean duplicatedNickname(String nickname) {
+		 return userRepository.existsByNickname(nickname);
+	}
 
+	
+	
 	@Transactional
 	public Boolean join(JoinDTO joinDTO, MultipartFile file) {
-		System.out.println("여기까지?");
-		Boolean isDuplicated = this.duplicatedEmail(joinDTO.getEmail());
-		if (isDuplicated) {
+		Boolean isDuplicatedEmail = this.duplicatedEmail(joinDTO.getEmail());
+		Boolean isDuplicatedNickname = this.duplicatedNickname(joinDTO.getNickname());
+		if (isDuplicatedEmail || isDuplicatedNickname) {
 			return false;
 		} else {
 			joinDTO.setPassword(bCryptPasswordEncoder.encode(joinDTO.getPassword())); // 비밀번호 암호화
@@ -229,6 +235,8 @@ public class UserService {
 	    	refreshTokenRepository.deleteByEmail(email); //로그아웃 시 리프레시 토큰 삭제
 	    	return true;
 	}
+
+
 
 	
 	

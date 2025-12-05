@@ -1,13 +1,16 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import "../css/Header.css";
 import { logoutUser } from "../api/userAPI";
 
 const Header = ( props ) => {
+
+  const navigate = useNavigate();
+
   const handleLogout = async() => {
    
     // const response = await logoutUser(props.id, props.isLogin); 
-    const response = await logoutUser(props.setIsLogin); 
+    const response = await logoutUser(props.setIsLogin, navigate); 
 
     // setIsLogin(false);
     // localStorage.removeItem("jwt"); // 토큰 제거
