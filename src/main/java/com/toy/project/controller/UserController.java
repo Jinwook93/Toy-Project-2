@@ -38,9 +38,11 @@ public class UserController {
 
 	private final UserService userService;
 
-	@GetMapping("/isDuplicatedEmail")
-	public Boolean checkEmail(String email) {
+	@GetMapping("/isDuplicateEmail")
+	public Boolean checkEmail(@RequestParam(name = "email") String email) {
+		System.out.println("이메일:"+ email);
 		Boolean result = userService.duplicatedEmail(email);
+		System.out.println("result:"+result);
 		return result ? true : false;
 	}
 

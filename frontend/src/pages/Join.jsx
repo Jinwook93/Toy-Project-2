@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { registerUser } from "../api/userAPI";
+import { registerUser, isDuplicateEmail } from "../api/userAPI";
 import { useNavigate } from "react-router-dom";
 
 const Join = () => {
@@ -16,7 +16,9 @@ const Join = () => {
   });
   const [profile,setProfile]= useState("");
   const navigate = useNavigate();
-  
+ // const  isFinalVerification = true;    // 이메일 최종 검증
+
+
   const handleJoin = async (e) => {
     e.preventDefault();
 
@@ -24,6 +26,15 @@ const Join = () => {
       alert("비밀번호와 확인값이 같지 않습니다.")
       return;
     }
+    
+    //const isDuplicateEmail = await isDuplicateEmail(user.email);
+
+    if(await isDuplicateEmail(user.email, true)== true){
+      // alert("중복된 이메일입니다.")
+      return;
+    }
+
+
 
 
     try {
@@ -61,6 +72,9 @@ const Join = () => {
           name="email"
           onChange={handleChange}
         />
+        <button type="button" onClick={()=>{isDuplicateEmail(user.email, false)}}>
+        중복확인
+        </button>
         <input
           type="password"
           placeholder="비밀번호"

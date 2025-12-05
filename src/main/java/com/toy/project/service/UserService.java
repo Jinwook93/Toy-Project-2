@@ -225,9 +225,7 @@ public class UserService {
 
 	@Transactional
 	public Boolean logout(String token) {
-	
 			String email = jwtUtil.getEmail(token.replace("Bearer ", ""));
-			System.out.println(email);
 	    	refreshTokenRepository.deleteByEmail(email); //로그아웃 시 리프레시 토큰 삭제
 	    	return true;
 	}
