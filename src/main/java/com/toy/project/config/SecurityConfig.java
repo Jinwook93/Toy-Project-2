@@ -18,6 +18,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import com.toy.project.handler.OAuth2SuccessHandler;
 import com.toy.project.jwt.JwtFilter;
 import com.toy.project.jwt.JwtUtil;
 import com.toy.project.service.CustomOAuth2UserService;
@@ -32,8 +33,8 @@ public class SecurityConfig {
 
 	private CustomUserDetailsService customUserDetailsService;
 	private final JwtUtil jwtUtil;
-//	private final CustomOAuth2UserService customOAuth2UserService;
-//	private final OAuth2SuccessHandler oAuth2SuccessHandler;
+	private final CustomOAuth2UserService customOAuth2UserService;
+	private final OAuth2SuccessHandler oAuth2SuccessHandler;
 	
 	@Bean
 	BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -100,13 +101,16 @@ public class SecurityConfig {
 				auth.requestMatchers("/", "/user/**").permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest().authenticated())
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-			
-//			.oauth2Login(oauth -> oauth
-////	            .loginPage("/login") // 커스텀 로그인 페이지(React에서 로그인 할 것이기 때문에 불필요)
-//	            .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-//	            .successHandler(oAuth2SuccessHandler) // JWT 발급 후 React로 redirect
-//	            );	
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//			.oauth2Login(oauth2 -> oauth2
+//                .defaultSuccessUrl("/", true) // 로그인 성공 후 이동할 URL
+//            );
+
+			.oauth2Login(oauth -> oauth
+//	            .loginPage("/login") // 커스텀 로그인 페이지(React에서 로그인 할 것이기 때문에 불필요)
+	            .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+	            .successHandler(oAuth2SuccessHandler) // JWT 발급 후 React로 redirect
+	            );	
 	        
 
 		

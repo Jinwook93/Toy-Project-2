@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.toy.project.entity.UserEntity;
 
@@ -16,6 +17,14 @@ import lombok.RequiredArgsConstructor;
 public class CustomUserDetails implements UserDetails {
 
     private final UserEntity userEntity;
+    
+    
+    // OAuth2User 기반 생성자
+    public CustomUserDetails(OAuth2User oAuth2User) {
+        UserEntity entity = new UserEntity(oAuth2User.getAttribute("email"), "temppassword","USER","GOOGLE");
+        this.userEntity = entity;
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

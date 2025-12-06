@@ -84,8 +84,8 @@ const Header = () => {
 
         {/* 네비게이션 */}
         <nav className="nav">
-          <Link to="/join">회원가입</Link>
-          <Link to="/getLoginUserInfo">내 정보</Link>
+          {isLogin?"":<Link to="/join">회원가입</Link>}
+          {isLogin? <Link to="/getLoginUserInfo">내 정보</Link>:""}
           {isLogin ? (
             <button className="logout-btn" onClick={handleLogout}>
               로그아웃
@@ -97,7 +97,7 @@ const Header = () => {
 
         {/* 인사말 */}
         <div className="welcome">
-          안녕하세요, {isLogin ? username : "anonymousUser"}님
+          {isLogin ? `안녕하세요, ${username} 님`: "로그인이 필요합니다"}
         </div>
       </div>
     </header>

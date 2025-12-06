@@ -18,6 +18,33 @@ export async function loginUser(email, password) {
 
 }
 
+
+
+export async function oAuth2UserCheck() {
+  const response = await fetch(`${BASE_URL}/user/oAuth2login`, {
+    method: "POST",
+    credentials: "include", // ✅ 쿠키 자동 포함
+    headers: {
+      "Content-Type": "application/json",
+    },
+    // OAuth2 로그인은 보통 서버가 쿠키를 내려주므로 body는 필요 없을 수 있음
+    // body: JSON.stringify({ email, password })
+  });
+
+  if (!response.ok) {
+    throw new Error("로그인 실패!!!!!!!!");
+  }
+
+  return await response.json(); // 서버가 내려주는 사용자 정보(JSON)
+}
+
+
+
+
+
+
+
+
 //회원가입
 export const registerUser = async (user, profile) => {
   try {
@@ -139,7 +166,8 @@ export const deleteUser = async (id, navigate, dispatcher) => {
      //setIsLogin(false);
     dispatcher(setIsLogin(false));      //setIsLogin import
     alert("삭제가 완료되었습니다");
-   
+   localStorage.removeItem("jwt");
+     localStorage.removeItem("refreshJwt");
     navigate("/");
 
    // return response;
@@ -222,6 +250,7 @@ export const logoutUser = async () => {
     try{
     const response = await fetch(`${BASE_URL}/user/logout`, {
     method: "POST",
+    credentials: "include", // ✅ 쿠키 자동 포함
     headers: {
     "Authorization": "Bearer " + localStorage.getItem("jwt")
         }

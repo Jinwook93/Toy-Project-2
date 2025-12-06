@@ -61,3 +61,48 @@
   .login-container a:hover {
     text-decoration: underline;
   }
+
+
+
+
+
+
+
+
+
+/*oAuth2*/
+
+  .oauth-buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .google-btn {
+    background-color: #db4437; /* 구글 빨강 */
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .naver-btn {
+    background-color: #03c75a; /* 네이버 초록 */
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .kakao-btn {
+    background-color: #fee500; /* 카카오 노랑 */
+    color: #000;
+    border: none;
+    padding: 10px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  

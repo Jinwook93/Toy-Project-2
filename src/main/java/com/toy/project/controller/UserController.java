@@ -12,6 +12,9 @@ import com.toy.project.entity.UserEntity;
 import com.toy.project.service.AdminService;
 import com.toy.project.service.UserService;
 
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.ObjectMapper;
 
@@ -151,8 +154,30 @@ public class UserController {
 
 
 	@PostMapping("/logout")
-	public ResponseEntity<?> getMethodName(@RequestHeader("Authorization") String token) {
+	public ResponseEntity<?> getMethodName(@RequestHeader("Authorization") String token, HttpServletResponse response) {
 		Boolean result = userService.logout(token);	
+		
+		// AccessToken 쿠키 제거
+	    Cookie accessCookie = new Cookie("accessToken", null);
+	    accessCookie.setPath("/");
+	    accessCookie.setMaxAge(0);			//만료
+	    response.addCookie(accessCookie);
+
+	    // RefreshToken 쿠키 제거
+	    Cookie refreshCookie = new Cookie("refreshToken", null);
+	    refreshCookie.setPath("/");
+	    refreshCookie.setMaxAge(0);
+	    response.addCookie(refreshCookie);
+
+	    // JSESSIONID 제거
+	    Cookie jsessionCookie = new Cookie("JSESSIONID", null);
+	    jsessionCookie.setPath("/");
+	    jsessionCookie.setMaxAge(0);
+	    response.addCookie(jsessionCookie);
+
+		
+		
+		
 		if (result) {
 			return ResponseEntity.status(200).body("로그아웃 성공");
 		} else {

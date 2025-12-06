@@ -41,6 +41,7 @@ const Login = () => {
   };
 
   return (
+    <>
     <div className="login-container">
     
 
@@ -62,7 +63,39 @@ const Login = () => {
         <button type="submit">로그인</button>
       </form>
       <Link to={"/join"}>회원가입</Link>
+
+
+
     </div>
+
+     {/* ✅ OAuth2 로그인 버튼들 */}
+ <div className="oauth-buttons">
+ <button
+   type="button"
+   className="google-btn"
+   onClick={() => window.location.href = "http://localhost:8080/oauth2/authorization/google"}
+ >
+   구글 로그인
+ </button>
+
+ <button
+   type="button"
+   className="naver-btn"
+   onClick={() => window.location.href = "http://localhost:8080/oauth2/authorization/naver"}
+ >
+   네이버 로그인
+ </button>
+
+ <button
+   type="button"
+   className="kakao-btn"
+   onClick={() => window.location.href = "http://localhost:8080/oauth2/authorization/kakao"}
+ >
+   카카오 로그인
+ </button>
+</div>
+
+</>
   );
 };
 
