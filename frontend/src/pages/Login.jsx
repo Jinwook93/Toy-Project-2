@@ -4,7 +4,7 @@ import Header from "../components/Header";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setUsername, setIsLogin } from "../redux/userAction";
-
+import "../css/loginform.css";
 
 
 const Login = () => {
@@ -41,7 +41,8 @@ const Login = () => {
   };
 
   return (
-    <div>
+    <div className="login-container">
+    
 
 
       <form onSubmit={handleLogin}>

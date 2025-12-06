@@ -3,8 +3,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import { getLoginUserInfo, updateUser } from "../api/userAPI";
 import { useDispatch } from "react-redux";
 import { setIsLogin } from "../redux/userAction";
-
-
+import { isDuplicateEmail, isDuplicateNickname } from "../api/userAPI";
+import "../css/updateform.css";
 
 
 
@@ -45,6 +45,40 @@ const UpdateUser = () => {
     //   return;
     // }
 
+    if(e.target.email.value === ""){
+      alert("이메일을 입력하세요");
+    return;
+    }
+
+    if(e.target.password.value === "" || e.target.password_check.value === ""){
+      if(e.target.password.value === ""){
+      alert("비밀번호를 입력해주세요");
+      }else{
+        alert("비밀번호를 확인해주세요");
+      }
+      return;
+    }
+
+
+
+    if(e.target.password.value !== e.target.password_check.value){
+      alert("비밀번호와 확인값이 같지 않습니다.")
+      return;
+    }
+
+
+    if(await isDuplicateEmail(e.target.email.value, true)== true){
+      // alert("중복된 이메일입니다.")
+      return;
+    }
+
+    if(await isDuplicateNickname(e.target.nickname.value, true)== true){
+      // alert("중복된 이메일입니다.")
+      return;
+    }
+
+
+
     try {
     
   
@@ -76,16 +110,27 @@ const UpdateUser = () => {
   };
 
   return (
-    <div>
+    <div className = "update-container">
        {userInfo ? (
       <form onSubmit={handleUpdate}>
         <h3>회원정보 수정</h3>
+        <div className ="row">
         <input type="text" placeholder="이메일" value={userInfo.email} name="email" onChange={handleChange} />
+        <button type="button" onClick={()=>{isDuplicateEmail(userInfo.email, false)}}>
+        중복확인
+        </button>
+        </div>
+        <div className ="row">
+        <input type="text" placeholder="닉네임" value={userInfo.nickname} name="nickname" onChange={handleChange} />
+        <button type="button" onClick={()=>{isDuplicateNickname(userInfo.nickname, false)}}>
+        중복확인
+        </button>
+        </div>
         <input type="password" placeholder="비밀번호" value={userInfo.password} name="password" onChange={handleChange} />
         <input type="password" placeholder="비밀번호 확인" value={userInfo.password_check} name="password_check" onChange={handleChange} />
         <input type="text" placeholder="주소" value={userInfo.address} name="address" onChange={handleChange} />
         <input type="text" placeholder="휴대폰 번호" value={userInfo.phone} name="phone" onChange={handleChange} />
-        <input type="text" placeholder="닉네임" value={userInfo.nickname} name="nickname" onChange={handleChange} />
+       
         <input type="text" placeholder="유저 이름" value={userInfo.username} name="username" onChange={handleChange} />
         <input type="file" name="profile" onChange={(e) => setProfile(e.target.files[0])} />
         <p>프로필: <img 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { registerUser, isDuplicateEmail, isDuplicateNickname } from "../api/userAPI";
 import { useNavigate } from "react-router-dom";
+import "../css/joinform.css";
 
 const Join = () => {
   const [user, setUser] = useState({
@@ -23,6 +24,15 @@ const Join = () => {
     e.preventDefault();
 
   
+
+    if(e.target.email.value === ""){
+        alert("이메일을 입력하세요");
+      return;
+    }
+
+
+
+
 
     if(e.target.password.value === "" || e.target.password_check.value === ""){
       if(e.target.password.value === ""){
@@ -79,9 +89,10 @@ const Join = () => {
   };
 
   return (
-    <div>
+    <div className="join-container">
       <form onSubmit={handleJoin}>
         <h3>회원가입</h3>
+        <div className ="row">
         <input
           type="text"
           placeholder="이메일"
@@ -92,6 +103,21 @@ const Join = () => {
         <button type="button" onClick={()=>{isDuplicateEmail(user.email, false)}}>
         중복확인
         </button>
+        </div>
+
+        <div className ="row">
+        <input
+          type="text"
+          placeholder="닉네임"
+          name="nickname"
+          value={user.nickname}
+          onChange={handleChange}
+        />
+         <button type="button" onClick={()=>{isDuplicateNickname(user.nickname, false)}}>
+        중복확인
+        </button>
+        </div>
+
         <input
           type="password"
           placeholder="비밀번호"
@@ -120,16 +146,7 @@ const Join = () => {
           value={user.phone}
           onChange={handleChange}
         />
-        <input
-          type="text"
-          placeholder="닉네임"
-          name="nickname"
-          value={user.nickname}
-          onChange={handleChange}
-        />
-         <button type="button" onClick={()=>{isDuplicateNickname(user.nickname, false)}}>
-        중복확인
-        </button>
+
         <input
           type="text"
           placeholder="유저 이름"

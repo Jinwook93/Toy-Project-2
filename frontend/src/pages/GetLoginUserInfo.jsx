@@ -3,7 +3,7 @@ import { getLoginUserInfo, deleteUser } from "../api/userAPI";
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setIsLogin } from '../redux/userAction';
-
+import "../css/mypageform.css";
 
 const GetLoginUserInfo = () => {
   const [userInfo, setUserInfo] = useState(null);
@@ -25,7 +25,7 @@ const GetLoginUserInfo = () => {
   }, []); // 컴포넌트가 처음 렌더링될 때 실행
 
   return (
-    <div>
+    <div className="user-info-container">
       <h3>유저정보</h3>
       {userInfo ? (
         <div>

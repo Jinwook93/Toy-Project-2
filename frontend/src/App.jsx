@@ -10,7 +10,8 @@ import Footer from './components/Footer'
 import { Provider, useDispatch } from 'react-redux'
 import { store } from "./redux/store";
 import { setIsLogin, setUsername } from './redux/userAction'
-import { getLoginUserInfo } from "./api/userAPI";
+import LayoutForm from './components/LayoutForm'
+
 
 
 
@@ -25,19 +26,16 @@ function App() {
 
 
 
-
-
-
-
-
   return (
     <>
      <Provider store={store}>     {/*반드시 키 값을 store로 지정*/}
       <BrowserRouter>
-      <Header/>
+      {/* <Header/> */}
+      <LayoutForm>
         <UserRouter />
         <HomeRouter/>
-        <Footer/> 
+        {/* <Footer/>  */}
+        </LayoutForm>
       </BrowserRouter>
       </Provider>
     </>

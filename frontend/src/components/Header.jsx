@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import "../css/Header.css";
+import "../css/header.css";
 import { logoutUser } from "../api/userAPI";
 import { useDispatch, useSelector } from "react-redux";
 import { logout, setIsLogin, setUsername } from "../redux/userAction";

@@ -1,0 +1,87 @@
+/* 전체 컨테이너 */
+.update-container {
+    max-width: 500px;
+    margin: 80px auto;              /* 화면 가운데 배치 */
+    padding: 30px;
+    background-color: #fff;         /* 흰색 배경 */
+    border-radius: 8px;             /* 모서리 둥글게 */
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 그림자 */
+    text-align: center;
+  }
+  
+  /* 제목 */
+  .update-container h3 {
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  /* 입력 필드와 select */
+  .update-container input,
+  .update-container select {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 14px;
+    transition: border-color 0.3s;
+  }
+  
+  .update-container input:focus,
+  .update-container select:focus {
+    border-color: #007bff;
+    outline: none;
+  }
+  
+  /* 가로 배치 row */
+  .row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  
+  .row input {
+    flex: 1;
+  }
+  
+  .row button {
+    flex-shrink: 0;
+    padding: 8px 12px;
+    background-color: #6c757d;
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    cursor: pointer;
+  }
+  
+  .row button:hover {
+    background-color: #5a6268;
+  }
+  
+  /* 제출 버튼 */
+  .update-container button[type="submit"] {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    border: none;
+    border-radius: 6px;
+    color: #fff;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+  }
+  
+  .update-container button[type="submit"]:hover {
+    background-color: #0056b3;
+  }
+  
+  /* 프로필 이미지 */
+  .update-container img {
+    max-width: 120px;
+    height: auto;
+    border-radius: 50%;
+    margin-top: 10px;
+    border: 2px solid #ccc;
+  }
