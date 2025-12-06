@@ -4,7 +4,7 @@ import { useDispatch } from "react-redux";
 import { setIsLogin, setUsername } from "../redux/userAction";
 import { oAuth2UserCheck } from "../api/userAPI";
 
-const OAuth2Redirect = () => {
+const OAuth2Redirect = ({provider}) => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -15,8 +15,9 @@ const OAuth2Redirect = () => {
         dispatch(setUsername(data.user.email));
         localStorage.setItem("jwt", data.accessToken);
         localStorage.setItem("refreshJwt", data.refreshToken);
-        
+        console.log(data);
         dispatch(setIsLogin(true));
+        alert("로그인에 성공하였습니다 !!");
         navigate("/"); // 로그인 후 홈으로 이동
       } catch (err) {
         console.error("유저 정보 불러오기 실패:", err);

@@ -45,6 +45,8 @@ public class UserInfoDTO {
 
 	String role;
 
+	String provider;
+	
 	Date makingTime;
 	
 	// 소셜 로그인일 경우 provider 정보 저장
@@ -70,6 +72,7 @@ public class UserInfoDTO {
 		this.username = userEntity.get().getUsername();
 		this.nickname = userEntity.get().getNickname();
 		this.makingTime = userEntity.get().getMakingTime();
+		this.provider = userEntity.get().getProvider();
 	}
 	
 	

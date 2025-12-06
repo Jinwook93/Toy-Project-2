@@ -7,10 +7,11 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.toy.project.dto.UserInfoDTO;
 import com.toy.project.entity.RefreshTokenEntity;
 import com.toy.project.entity.UserEntity;
 import com.toy.project.jwt.JwtUtil;
@@ -22,7 +23,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@Controller
 @RequiredArgsConstructor
 public class OAuth2Controller {
 	
@@ -62,32 +62,37 @@ public class OAuth2Controller {
 	    }
 
 	    String email = jwtUtil.getEmail(accessToken);
-	    UserEntity user = userRepository.findByEmail(email)
+	    String provider = jwtUtil.getProvider(accessToken);
+	    UserEntity userEntity = userRepository.findByEmailAndProvider(email,provider)
 	        .orElseThrow(() -> new RuntimeException("User not found"));
-
-
 	    
+	    UserInfoDTO user = new UserInfoDTO();
+	    user.setEmail(userEntity.getEmail());
+	    user.setNickname(userEntity.getNickname());
+	    user.setRole(userEntity.getRole());
+	    user.setProvider(userEntity.getProvider());
 	    
 	    //리프레시 토큰 조회
-	    Optional<RefreshTokenEntity> optionalEntity = refreshTokenRepository.findByEmail(email);
+	    Optional<RefreshTokenEntity> optionalEntity = refreshTokenRepository.findByEmailAndProvider(email, provider);
 
 	    RefreshTokenEntity refreshTokenEntity;
 
 	    if (optionalEntity.isPresent()) {
 	        // 이미 존재 → 토큰 갱신
 	        refreshTokenEntity = optionalEntity.get();
-	        refreshToken = jwtUtil.createRefreshToken(email, 7 * 24 * 60 * 60 * 1000L);
+	        refreshToken = jwtUtil.createRefreshToken(email, user.getProvider(), 7 * 24 * 60 * 60 * 1000L);
 	        refreshTokenEntity.setToken(refreshToken);
 	        refreshTokenEntity.setExpiryDate(LocalDateTime.now().plusDays(7));
 	        refreshTokenRepository.save(refreshTokenEntity); // UPDATE 실행
 	    } else {
 	        // 새로 생성
-	        refreshToken = jwtUtil.createRefreshToken(email, 7 * 24 * 60 * 60 * 1000L);
+	        refreshToken = jwtUtil.createRefreshToken(email, user.getProvider(), 7 * 24 * 60 * 60 * 1000L);
 	        refreshTokenEntity = RefreshTokenEntity.builder()
 	                .email(email)
 	                .token(refreshToken)
 	                .expiryDate(LocalDateTime.now().plusDays(7))
 	                .deviceId("A")
+	                .provider(user.getProvider())
 	                .build();
 	        refreshTokenRepository.save(refreshTokenEntity); // INSERT 실행
 	    }
@@ -100,4 +105,11 @@ public class OAuth2Controller {
 	    return ResponseEntity.ok(userAndToken);
 	}
 
+	
+	
+	
+
+	
+	
+	
 }

@@ -41,7 +41,7 @@ public class TokenController {
 	    String role = loginUser.getRole();
 	    
 	    // 새 Access Token 발급
-	    String newAccessToken = jwtUtil.createAccessToken(refreshTokenentity.getEmail(), role , 15 * 60 * 1000L);
+	    String newAccessToken = jwtUtil.createAccessToken(refreshTokenentity.getEmail(),loginUser.getProvider() ,role , 15 * 60 * 1000L);
 
 	    return ResponseEntity.ok()
 	        .header("Authorization", "Bearer " + newAccessToken)

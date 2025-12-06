@@ -21,7 +21,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		UserEntity user = userRepository.findByEmail(email).orElseThrow(() -> new IllegalAccessError("로그인에 실패하였습니다"));
+		UserEntity user = userRepository.findByEmailAndProvider(email, null).orElseThrow(() -> new IllegalAccessError("로그인에 실패하였습니다"));
 		return new CustomUserDetails(user);
 	}
 	

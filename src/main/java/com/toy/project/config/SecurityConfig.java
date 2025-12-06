@@ -80,6 +80,7 @@ public class SecurityConfig {
 //    @Order(1)
     SecurityFilterChain loginChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/user/login", "/user/join")
+    	.formLogin(formLogin -> formLogin.disable())
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());

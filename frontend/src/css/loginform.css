@@ -32,7 +32,7 @@
   }
   
   /* 버튼 */
-  .login-container button {
+  .login-container button:not(.google-btn):not(.naver-btn):not(.kakao-btn){
     width: 100%;
     padding: 12px;
     background-color: #007bff;      /* 파란색 버튼 */

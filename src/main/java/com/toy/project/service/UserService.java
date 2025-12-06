@@ -91,7 +91,7 @@ public class UserService {
 		return isPresent;
 	}
 
-	// 로그인
+	// 로그인			//oAuth2로그인 아님
 	@Transactional
 	public String login(LoginDTO loginDTO) {
 		Authentication authentication = authenticationManager
@@ -107,15 +107,23 @@ public class UserService {
 		if (role.startsWith("ROLE_")) {
 			role = role.substring(5); // "ROLE_ADMIN" -> "ADMIN"
 		}
+		
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		UserEntity signinuser = (UserEntity) auth.getPrincipal();
+		String provider = signinuser.getProvider();
+		
+		
+		
+		
 
-		Optional<RefreshTokenEntity> searchRefreshTokenEntity = refreshTokenRepository.findByEmail(loginDTO.getEmail());
-
+		Optional<RefreshTokenEntity> searchRefreshTokenEntity = refreshTokenRepository.findByEmailAndProvider(loginDTO.getEmail(),provider);
+		
 		Boolean IsDuplicatedRefreshToken = searchRefreshTokenEntity.isPresent();
 		String refreshToken = "";
 
 		if (!IsDuplicatedRefreshToken) { // 중복된 refreshToken이 없다면 토큰생성
 			// 리프레시 토큰 생성 및 저장
-			refreshToken = jwtUtil.createRefreshToken(loginDTO.getEmail(), 7 * 24 * 60 * 60 * 1000L);
+			refreshToken = jwtUtil.createRefreshToken(loginDTO.getEmail(), provider, 7 * 24 * 60 * 60 * 1000L);
 
 			RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder().email(loginDTO.getEmail())
 					.token(refreshToken).expiryDate(LocalDateTime.now().plusDays(7)).deviceId("A").build();
@@ -126,9 +134,9 @@ public class UserService {
 			// refreshToken이 있어도 만료된 경우 삭제
 			Boolean IsExpiredToken = jwtUtil.getExpired(refreshToken);
 			if (IsExpiredToken) {
-				refreshTokenRepository.deleteByEmail(loginDTO.getEmail());
+				refreshTokenRepository.deleteByEmailAndProvider(refreshToken, provider);
 				// 리프레시 토큰 생성 및 저장
-				refreshToken = jwtUtil.createRefreshToken(loginDTO.getEmail(), 7 * 24 * 60 * 60 * 1000L);
+				refreshToken = jwtUtil.createRefreshToken(loginDTO.getEmail(), provider,7 * 24 * 60 * 60 * 1000L);
 
 				RefreshTokenEntity refreshTokenEntity = RefreshTokenEntity.builder().email(loginDTO.getEmail())
 						.token(refreshToken).expiryDate(LocalDateTime.now().plusDays(7)).deviceId("A").build();
@@ -137,7 +145,7 @@ public class UserService {
 
 		}
 
-		String accessToken = jwtUtil.createAccessToken(loginDTO.getEmail(), role, 15 * 60 * 1000L);
+		String accessToken = jwtUtil.createAccessToken(loginDTO.getEmail(), provider,role, 15 * 60 * 1000L);
 
 		return accessToken + "===TOKEN BOUNDARY===" + refreshToken;
 	}
@@ -184,7 +192,8 @@ public class UserService {
 	public UserInfoDTO getLoginUserInfo(String token) {
 			String role = jwtUtil.getRole(token);
 			String email = jwtUtil.getEmail(token);
-			Optional<UserEntity> userEntity =userRepository.findByEmail(email);
+			String provider = jwtUtil.getProvider(token);
+			Optional<UserEntity> userEntity =userRepository.findByEmailAndProvider(email,provider);
 			
 		
 			if(!userEntity.isPresent()) {
@@ -197,7 +206,6 @@ public class UserService {
 //			}
 			
 			
-			System.out.println("ROLE_ADMIN::: "+ jwtUtil.getRole(token));
 			userInfoDTO.UserEntityToUserInfoDTO(userEntity);
 			  // ADMIN은 모든 유저 조회 가능
 		    if ("ADMIN".equals(role)) {
@@ -232,7 +240,8 @@ public class UserService {
 	@Transactional
 	public Boolean logout(String token) {
 			String email = jwtUtil.getEmail(token.replace("Bearer ", ""));
-	    	refreshTokenRepository.deleteByEmail(email); //로그아웃 시 리프레시 토큰 삭제
+			String provider = jwtUtil.getProvider(token.replace("Bearer ", ""));
+			refreshTokenRepository.deleteByEmailAndProvider(email, provider); //로그아웃 시 리프레시 토큰 삭제
 	    	return true;
 	}
 

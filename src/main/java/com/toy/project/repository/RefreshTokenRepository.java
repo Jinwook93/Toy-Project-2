@@ -11,8 +11,8 @@ import com.toy.project.entity.RefreshTokenEntity;
 public interface RefreshTokenRepository extends JpaRepository<RefreshTokenEntity, Long> {
 
 	Optional<RefreshTokenEntity> findByToken(String refreshToken);
-	Optional<RefreshTokenEntity> findByEmail(String email);
+	Optional<RefreshTokenEntity> findByEmailAndProvider(String email, String provider);
 	void deleteByToken(String refreshToken);
-	void deleteByEmail(String email);
+	void deleteByEmailAndProvider(String email, String provider);
 
 }

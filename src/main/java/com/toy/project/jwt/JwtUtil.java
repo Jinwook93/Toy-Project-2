@@ -33,9 +33,10 @@ public class JwtUtil {
 	}
 
 	
-	public String createAccessToken(String email, String role, Long expirationDate) {
+	public String createAccessToken(String email, String provider, String role, Long expirationDate) {
 		String token = Jwts.builder()
 		.claim("email", email)
+		.claim("provider", provider)
 		.claim("role", role)			//ROLE_ 이 제거된 상태로 기입됨
 		.issuedAt(new Date(System.currentTimeMillis()))
 		.expiration(new Date(System.currentTimeMillis()+ expirationDate))
@@ -45,9 +46,10 @@ public class JwtUtil {
 	}
 	
 	
-	public String createRefreshToken(String email, Long expirationDate) {
+	public String createRefreshToken(String email, String provider, Long expirationDate) {
 		String token = Jwts.builder()
 		.claim("email", email)
+		.claim("provider", provider)
 		.issuedAt(new Date(System.currentTimeMillis()))
 		.expiration(new Date(System.currentTimeMillis()+ expirationDate))
 		.signWith(secretKey)
@@ -79,6 +81,11 @@ public class JwtUtil {
 	
 	public Boolean getExpired(String token) {
 		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().getExpiration().before(new Date());
+	}
+
+
+	public String getProvider(String token) {
+		return Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token).getPayload().get("provider", String.class);
 	}
 	
 	

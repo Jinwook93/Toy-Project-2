@@ -66,7 +66,9 @@ const Login = () => {
 
 
 
-    </div>
+
+
+
 
      {/* ✅ OAuth2 로그인 버튼들 */}
  <div className="oauth-buttons">
@@ -75,7 +77,8 @@ const Login = () => {
    className="google-btn"
    onClick={() => window.location.href = "http://localhost:8080/oauth2/authorization/google"}
  >
-   구글 로그인
+   {/* <img src="/icon/web_light_sq_na@1x.png" alt="logo" /> */}
+    구글 로그인
  </button>
 
  <button
@@ -94,6 +97,23 @@ const Login = () => {
    카카오 로그인
  </button>
 </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </div>
+
+
 
 </>
   );
