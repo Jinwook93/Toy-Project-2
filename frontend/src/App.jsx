@@ -7,23 +7,64 @@ import UserRouter from './router/UserRouter'
 import HomeRouter from './router/HomeRouter'
 import Header from './components/Header'
 import Footer from './components/Footer'
+import { Provider } from 'react-redux'
+import { store } from "./redux/store";
+
+
+
+
+
 
 function App() {
-  const [userName, setUserName] = useState("");   // 추가
-  const [isLogin, setIsLogin] = useState(false);  // 추가
-  const [id, setId] = useState(null);  //회원 식별번호
+  // const [userName, setUserName] = useState("");   // 추가
+  // const [isLogin, setIsLogin] = useState(false);  // 추가
+  // const [id, setId] = useState(null);  //회원 식별번호
 
 
   return (
     <>
+     <Provider store={store}>
+
       <BrowserRouter>
-      <Header  username={userName} isLogin={isLogin} id = {id} setIsLogin = {setIsLogin}/>
-        <UserRouter setUserName={setUserName} setIsLogin={setIsLogin} />
-        <HomeRouter isLogin ={isLogin} id ={id}/>
+      <Header/>
+        <UserRouter />
+        <HomeRouter/>
         <Footer/> 
       </BrowserRouter>
+      </Provider>
     </>
   )
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// function App() {
+//   const [userName, setUserName] = useState("");   // 추가
+//   const [isLogin, setIsLogin] = useState(false);  // 추가
+//   const [id, setId] = useState(null);  //회원 식별번호
+
+
+//   return (
+//     <>
+//       <BrowserRouter>
+//       <Header  username={userName} isLogin={isLogin} id = {id} setIsLogin = {setIsLogin}/>
+//         <UserRouter setUserName={setUserName} setIsLogin={setIsLogin} />
+//         <HomeRouter isLogin ={isLogin} id ={id}/>
+//         <Footer/> 
+//       </BrowserRouter>
+//     </>
+//   )
+// }
 
 export default App
