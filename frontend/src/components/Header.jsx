@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import "../css/Header.css";
 import { logoutUser } from "../api/userAPI";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, setIsLogin } from "../redux/userAction";
-
+import { logout, setIsLogin, setUsername } from "../redux/userAction";
+import { getLoginUserInfo} from "../api/userAPI";
 
 
 const Header = () => {
@@ -12,6 +12,45 @@ const Header = () => {
   const navigate = useNavigate();
   const {isLogin, username} =  useSelector((state) => state.user);   //store에서 키가 user인 객체를 가져옴
   const dispatch = useDispatch();
+
+
+
+
+
+
+
+
+
+  useEffect(() => {
+    const fetchUserInfo = async () => {
+      const token = localStorage.getItem("jwt");
+      const refreshToken = localStorage.getItem("refreshJwt");
+
+      if (token) {
+        try {
+          const data = await getLoginUserInfo();
+          dispatch(setUsername(data.email));
+          dispatch(setIsLogin(true));
+        } catch (err) {
+          console.error("유저 정보 불러오기 실패:", err);
+        }
+      }
+    };
+
+    fetchUserInfo(); // ✅ async 함수 호출
+  }, [dispatch]);
+
+
+
+
+
+
+
+
+
+
+
+
 
   const handleLogout = async() => {
    
@@ -30,6 +69,11 @@ const Header = () => {
     // alert("로그아웃 되었습니다.");
   };
 
+
+
+
+
+  
   return (
     <header className="header">
       <div className="header-container">

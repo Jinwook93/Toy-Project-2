@@ -57,6 +57,7 @@ const UpdateUser = () => {
         dispatch(setIsLogin(false));
         localStorage.removeItem("jwt");
         localStorage.removeItem("refreshJwt");
+        alert("수정된 정보로 다시 로그인해주세요"); 
         navigate("/");
       } else {
         alert("유저 정보 수정 실패"); // "유저 정보 수정 실패"
