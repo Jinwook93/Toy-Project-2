@@ -4,6 +4,9 @@ import java.io.File;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -42,6 +45,16 @@ public class UserService {
 	private final JwtUtil jwtUtil;
 	private final RefreshTokenRepository refreshTokenRepository;
 	private final OAuth2AuthorizedClientService authorizedClientService;
+	
+	
+	
+	
+	 @Value("${spring.security.oauth2.client.registration.naver.client-id}")
+	 private String naverClientId;
+
+	 @Value("${spring.security.oauth2.client.registration.naver.client-secret}")
+	 private String naverClientSecret;
+	
 	
 	@Transactional
 	public Boolean duplicatedEmail(String email) {
@@ -246,29 +259,45 @@ public class UserService {
 //	}
 
 	@Transactional
-	public Boolean logout(String token, String providerFromFront) {
+	public Boolean logout(String token, String providerFromFront, String oAuth2AccessToken) {
 		//System.out.println(token);
-	//	RestTemplate restTemplate = new RestTemplate();
-		
-		
+		 RestTemplate restTemplate = new RestTemplate();
+
+		 
+
+
+		 
+		 
+		if(providerFromFront.equals("") || providerFromFront == null ) {
+		    try {
+		        if (providerFromFront.equalsIgnoreCase("GOOGLE")) {
+		            String url = "https://accounts.google.com/o/oauth2/revoke?token=" + oAuth2AccessToken;
+		            restTemplate.getForObject(url, String.class);
+		            System.out.println("Google 로그아웃 완료");
+		        } else if (providerFromFront.equalsIgnoreCase("NAVER")) {
+		            String url = "https://nid.naver.com/oauth2.0/token?grant_type=delete"
+		                       + "&client_id=" + naverClientId
+		                       + "&client_secret=" + naverClientSecret
+		                       + "&access_token=" + oAuth2AccessToken
+		                       + "&service_provider=NAVER";
+		            restTemplate.getForObject(url, String.class);
+		            System.out.println("Naver 로그아웃 완료");
+		        } else if (providerFromFront.equalsIgnoreCase("KAKAO")) {
+		            String url = "https://kapi.kakao.com/v1/user/logout";
+		            HttpHeaders headers = new HttpHeaders();
+		            headers.setBearerAuth(oAuth2AccessToken);
+		            HttpEntity<String> entity = new HttpEntity<>(headers);
+		            restTemplate.postForObject(url, entity, String.class);
+		            System.out.println("Kakao 로그아웃 완료");
+		        }
+		    } catch (Exception e) {
+		        System.err.println("OAuth2 로그아웃 실패: " + e.getMessage());
+		    }
 
 		
-		
-		
-		
-		
-		if(providerFromFront.equals("GOOGLE")){
-
-            System.out.println("Google 로그아웃 완료");
-
-		}	
-		else if(providerFromFront.equals("NAVER")){
-			System.out.println("NAVER");
 		}
-		else if(providerFromFront.equals("KAKAO")){
-			System.out.println("KAKAO");
-		}	
-			
+
+
 			
 			String email = jwtUtil.getEmail(token.replace("Bearer ", ""));
 			String provider = jwtUtil.getProvider(token.replace("Bearer ", ""));

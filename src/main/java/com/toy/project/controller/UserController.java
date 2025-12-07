@@ -155,9 +155,12 @@ public class UserController {
 
 
 	@PostMapping("/logout")
-	public ResponseEntity<?> getMethodName(@RequestHeader("Authorization") String token, HttpServletResponse response, @RequestBody String  provider) {
-		
-		Boolean result = userService.logout(token, provider);	
+	public ResponseEntity<?> getMethodName(@RequestHeader("Authorization") String token, HttpServletResponse response, @RequestBody Map<String,String>  provider_oAuth2Token) {
+		String provider = provider_oAuth2Token.get("provider");
+		String oAuth2AccessToken = provider_oAuth2Token.get("oAuth2Token"); //oAuth 액세스 토큰
+		System.out.println(provider);
+		System.out.println(oAuth2AccessToken);
+		Boolean result = userService.logout(token, provider, oAuth2AccessToken);	
 		
 		// AccessToken 쿠키 제거
 	    Cookie accessCookie = new Cookie("accessToken", null);

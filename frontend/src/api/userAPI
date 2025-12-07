@@ -255,8 +255,10 @@ export const logoutUser = async (provider) => {
     "Authorization": "Bearer " + localStorage.getItem("jwt"),
      "Content-Type": "application/json"
         },
-        //body: JSON.stringify({ provider })//✅ {provider: 값} 형태로 전달
-        body:  JSON.stringify(provider)
+        body: JSON.stringify({ "provider" : provider, //✅ {provider: 값} 형태로 전달
+                              "oAuth2Token" : localStorage.getItem(provider.toLowerCase()+"_AccessToken")
+                              })
+      //  body:  JSON.stringify(provider)   //문자열로 전달
         });
      if (!response.ok) {
       throw new Error("로그아웃 실패");
