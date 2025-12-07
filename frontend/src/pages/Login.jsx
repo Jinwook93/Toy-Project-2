@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { loginUser, registerUser } from "../api/userAPI";
 import Header from "../components/Header";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setUsername, setIsLogin } from "../redux/userAction";
 import "../css/loginform.css";
 
@@ -10,21 +10,25 @@ import "../css/loginform.css";
 const Login = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  // const [provider, setProvider] = useState(null);
   // const [isLogin, setIsLogin] = useState(false);
   // const [userName, setUserName] = useState("");
   const navigate = useNavigate();   // ✅ 훅을 최상단에서 호출
   const dispatch = useDispatch();
-
+  const {provider} =  useSelector((state) => state.user); 
 
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const response = await loginUser(email, password); // Response 객체
+      const response = await loginUser(email, password, provider); // Response 객체
 
       // 헤더 저장
       localStorage.setItem("jwt", response.headers.get("Authorization").replace("Bearer ", ""));
       localStorage.setItem("refreshJwt", response.headers.get("Refresh-Token"));
+      
+
+
 
       // body 읽기
       const loggedUser = await response.text();
@@ -54,6 +58,13 @@ const Login = () => {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        {/* <select name="provider" value={provider} onChange={(e) => setProvider(e.target.value)}>
+        <option value="LOCAL">일반</option>
+         <option value="GOOGLE">구글</option>
+          <option value="NAVER">네이버</option>
+         <option value="KAKAO">카카오</option>
+        </select> */}
+
         <input
           type="password"
           placeholder="비밀번호"

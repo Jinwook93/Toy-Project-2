@@ -1,6 +1,7 @@
 // userReducer.js
 const initialState = {
     username: "",
+    provider: "",
     isLogin: false,
     id: null,
   };
@@ -15,7 +16,9 @@ const initialState = {
       case "SET_ID":
         return { ...state, id: action.payload };
       case "LOGOUT":
-        return { ...state, userName: "", isLogin: false, id: null };
+        return { ...state, username: "", isLogin: false, id: null, provider: "" };
+      case "SET_PROVIDER":
+            return { ...state, provider: action.payload };  
       default:
         return state;
     }

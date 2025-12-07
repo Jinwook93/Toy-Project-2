@@ -17,3 +17,10 @@ export const setUsername = (name) => ({
   export const logout = () => ({
     type: "LOGOUT",
   });
+
+
+  export const setProvider = (provider) => ({
+    type: "SET_PROVIDER",
+    payload: provider,
+  });
+  

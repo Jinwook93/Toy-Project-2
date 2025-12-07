@@ -7,8 +7,14 @@ import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.toy.project.dto.UserInfoDTO;
@@ -17,6 +23,7 @@ import com.toy.project.entity.UserEntity;
 import com.toy.project.jwt.JwtUtil;
 import com.toy.project.repository.RefreshTokenRepository;
 import com.toy.project.repository.UserRepository;
+import com.toy.project.service.UserService;
 
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,13 +37,18 @@ public class OAuth2Controller {
 	private final JwtUtil jwtUtil;
 	private final UserRepository userRepository;
 	private final RefreshTokenRepository refreshTokenRepository;
+	private final OAuth2AuthorizedClientService authorizedClientService;
+
+	
+	
 	
 	@PostMapping("/user/oAuth2login")
-	public ResponseEntity<?> getCurrentUser(HttpServletRequest request) {
+	public ResponseEntity<?> getCurrentUser(HttpServletRequest request, Authentication authentication) {
 	    
 		Cookie[] cookies = request.getCookies();
 	    String accessToken = null;
 	    String refreshToken = null;
+	    String oAuth2AccessToken = null;
 	    
 	    if (cookies != null) {			//쿠키검증
 	        for (Cookie cookie : cookies) {
@@ -47,16 +59,27 @@ public class OAuth2Controller {
 	        }
 	    }
 
-//	    if (cookies != null) {			//쿠키검증
-//	        for (Cookie cookie : cookies) {
-//	            if ("refreshToken".equals(cookie.getName())) {
-//	                refreshToken = cookie.getValue();
-//	                break;
-//	            }
-//	        }
-//	    }
+	    if (cookies != null) {			//쿠키검증
+	        for (Cookie cookie : cookies) {
+	            if ("refreshToken".equals(cookie.getName())) {
+	                refreshToken = cookie.getValue();
+	                break;
+	            }
+	        }
+	    }
 	    
+	    if (cookies != null) {			//쿠키검증
+	        for (Cookie cookie : cookies) {
+	            if (cookie.getName().contains("oAuth2Cookie_")) {
+	                oAuth2AccessToken = cookie.getValue();
+	                break;
+	            }
+	        }
+	    }
 	    
+	   // String provider_cookie = oAuth2AccessToken.split("_")[1];
+	    
+	   
 	    if (accessToken == null || !jwtUtil.validateJwt(accessToken)) {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 	    }
@@ -79,11 +102,11 @@ public class OAuth2Controller {
 
 	    if (optionalEntity.isPresent()) {
 	        // 이미 존재 → 토큰 갱신
-	        refreshTokenEntity = optionalEntity.get();
+	        refreshTokenEntity = optionalEntity.get();			//영속 상태
 	        refreshToken = jwtUtil.createRefreshToken(email, user.getProvider(), 7 * 24 * 60 * 60 * 1000L);
 	        refreshTokenEntity.setToken(refreshToken);
 	        refreshTokenEntity.setExpiryDate(LocalDateTime.now().plusDays(7));
-	        refreshTokenRepository.save(refreshTokenEntity); // UPDATE 실행
+	    //    refreshTokenRepository.save(refreshTokenEntity); // UPDATE 실행		( 영속 상태이므로 save 생략 가능)
 	    } else {
 	        // 새로 생성
 	        refreshToken = jwtUtil.createRefreshToken(email, user.getProvider(), 7 * 24 * 60 * 60 * 1000L);
@@ -97,14 +120,35 @@ public class OAuth2Controller {
 	        refreshTokenRepository.save(refreshTokenEntity); // INSERT 실행
 	    }
 
+	
+	    
+	    
 	    
 	    Map<String, Object> userAndToken = new HashMap<>();
 	    userAndToken.put("user", user);
 	    userAndToken.put("accessToken", accessToken);
 	    userAndToken.put("refreshToken", refreshToken);
+	    userAndToken.put("oAuth2AccessToken",oAuth2AccessToken);
+	    
+	    
+	    
+	    
 	    return ResponseEntity.ok(userAndToken);
 	}
 
+	
+	
+	
+	
+
+
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

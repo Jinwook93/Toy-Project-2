@@ -78,12 +78,19 @@ public class SecurityConfig {
 	
     @Bean
 //    @Order(1)
-    SecurityFilterChain loginChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/user/login", "/user/join")
+    SecurityFilterChain oAuth2Chain(HttpSecurity http) throws Exception {
+   //     http.securityMatcher("/user/login", "/user/join", "/login/oauth2/code/google")
+      http.securityMatcher("/login/oauth2/code/**","/oauth2/authorization/**")
     	.formLogin(formLogin -> formLogin.disable())
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll());
+            .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
+            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.oauth2Login(oauth -> oauth
+//		            .loginPage("/login") // 커스텀 로그인 페이지(React에서 로그인 할 것이기 때문에 불필요)
+		            .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
+		            .successHandler(oAuth2SuccessHandler) // JWT 발급 후 React로 redirect
+		            );	
         return http.build();
     }
 
@@ -93,7 +100,7 @@ public class SecurityConfig {
 //	@Order(2)
 	SecurityFilterChain apiChain(HttpSecurity http) {					//토큰을 비교하는 필터 수행
 		http
-		.securityMatcher("/**")
+		.securityMatcher("/user/**", "/admin/**","/refresh/**")
 		.formLogin(formLogin -> formLogin.disable())
 		.csrf(csrf -> csrf.disable())
 		.cors(cors -> cors.configurationSource(corsConfigurationSource()))
@@ -102,18 +109,14 @@ public class SecurityConfig {
 				auth.requestMatchers("/", "/user/**").permitAll()
 				.requestMatchers("/admin/**").hasRole("ADMIN")
 				.anyRequest().authenticated())
-			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+			.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 //			.oauth2Login(oauth2 -> oauth2
 //                .defaultSuccessUrl("/", true) // 로그인 성공 후 이동할 URL
 //            );
 
-			.oauth2Login(oauth -> oauth
-//	            .loginPage("/login") // 커스텀 로그인 페이지(React에서 로그인 할 것이기 때문에 불필요)
-	            .userInfoEndpoint(userInfo -> userInfo.userService(customOAuth2UserService))
-	            .successHandler(oAuth2SuccessHandler) // JWT 발급 후 React로 redirect
-	            );	
-	        
 
+	        
+		
 		
 		
 		return http.build();

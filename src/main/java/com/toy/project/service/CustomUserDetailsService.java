@@ -1,5 +1,6 @@
 package com.toy.project.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,7 +22,8 @@ public class CustomUserDetailsService implements UserDetailsService {
 
 	@Override
 	public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-		UserEntity user = userRepository.findByEmailAndProvider(email, null).orElseThrow(() -> new IllegalAccessError("로그인에 실패하였습니다"));
+		String provider = null;
+		UserEntity user = userRepository.findByEmailAndProvider(email, provider).orElseThrow(() -> new IllegalAccessError("로그인에 실패하였습니다"));
 		return new CustomUserDetails(user);
 	}
 	

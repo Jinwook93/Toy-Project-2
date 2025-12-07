@@ -37,7 +37,7 @@ public class TokenController {
 	        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Refresh Token expired");
 	    }
 
-	    UserEntity loginUser = userRepository.findByEmail(refreshTokenentity.getEmail()).orElseThrow(() -> new IllegalArgumentException("유저를 조회할 수 없습니다"));  
+	    UserEntity loginUser = userRepository.findByEmailAndProvider(refreshTokenentity.getEmail(),refreshTokenentity.getProvider()).orElseThrow(() -> new IllegalArgumentException("유저를 조회할 수 없습니다"));  
 	    String role = loginUser.getRole();
 	    
 	    // 새 Access Token 발급

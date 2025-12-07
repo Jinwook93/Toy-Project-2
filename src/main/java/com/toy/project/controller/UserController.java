@@ -15,6 +15,7 @@ import com.toy.project.service.UserService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import tools.jackson.databind.ObjectMapper;
 
@@ -40,7 +41,7 @@ import org.springframework.web.bind.annotation.RequestPart;
 public class UserController {
 
 	private final UserService userService;
-
+	
 	@GetMapping("/isDuplicateEmail")
 	public Boolean checkEmail(@RequestParam(name = "email") String email) {//`${BASE_URL}/user/isDuplicateEmail?email=${encodeURIComponent(email)}`
 		Boolean result = userService.duplicatedEmail(email);
@@ -154,8 +155,9 @@ public class UserController {
 
 
 	@PostMapping("/logout")
-	public ResponseEntity<?> getMethodName(@RequestHeader("Authorization") String token, HttpServletResponse response) {
-		Boolean result = userService.logout(token);	
+	public ResponseEntity<?> getMethodName(@RequestHeader("Authorization") String token, HttpServletResponse response, @RequestBody String  provider) {
+		
+		Boolean result = userService.logout(token, provider);	
 		
 		// AccessToken 쿠키 제거
 	    Cookie accessCookie = new Cookie("accessToken", null);
@@ -174,7 +176,22 @@ public class UserController {
 	    jsessionCookie.setPath("/");
 	    jsessionCookie.setMaxAge(0);
 	    response.addCookie(jsessionCookie);
-
+	    
+	    // oAuth2Cookie 제거	
+	    Cookie oAuth2Cookie = null;
+	    if(provider.toLowerCase().contains("google")) {	
+	    oAuth2Cookie = new Cookie("oAuth2Cookie_google", null);
+	    }else  if(provider.toLowerCase().contains("naver")) {
+		   oAuth2Cookie = new Cookie("oAuth2Cookie_naver", null);
+		    } else if(provider.toLowerCase().contains("kakao")) {
+			  oAuth2Cookie = new Cookie("oAuth2Cookie_kakao", null);
+		    }
+	    if (oAuth2Cookie != null) {
+	        oAuth2Cookie.setPath("/");
+	        oAuth2Cookie.setMaxAge(0);
+	        response.addCookie(oAuth2Cookie);
+	    }
+	    
 		
 		
 		
@@ -185,5 +202,5 @@ public class UserController {
 		}
 	}
 
-	
+
 }

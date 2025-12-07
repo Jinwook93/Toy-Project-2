@@ -11,8 +11,10 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import com.toy.project.entity.UserEntity;
 
+import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
+@Getter
 @RequiredArgsConstructor
 public class CustomUserDetails implements UserDetails {
 

@@ -10,9 +10,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
+import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.toy.project.dto.CustomUserDetails;
 import com.toy.project.dto.JoinDTO;
 import com.toy.project.dto.LoginDTO;
 import com.toy.project.dto.UpdateUserDTO;
@@ -36,7 +41,8 @@ public class UserService {
 	private final AuthenticationManager authenticationManager;
 	private final JwtUtil jwtUtil;
 	private final RefreshTokenRepository refreshTokenRepository;
-
+	private final OAuth2AuthorizedClientService authorizedClientService;
+	
 	@Transactional
 	public Boolean duplicatedEmail(String email) {
 	    return userRepository.existsByEmail(email);
@@ -96,8 +102,11 @@ public class UserService {
 	public String login(LoginDTO loginDTO) {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
-		SecurityContextHolder.getContext().setAuthentication(authentication);
-
+				SecurityContextHolder.getContext().setAuthentication(authentication);
+				
+				
+				
+				
 		// 권한(Role) 추출
 		String role = authentication.getAuthorities().stream()
 				.map(GrantedAuthority::getAuthority).findFirst() // 여러 권한이 있을 경우 첫 번째만 사용
@@ -109,10 +118,9 @@ public class UserService {
 		}
 		
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-		UserEntity signinuser = (UserEntity) auth.getPrincipal();
+		CustomUserDetails userDetails = (CustomUserDetails) auth.getPrincipal();
+		UserEntity signinuser = userDetails.getUserEntity(); // ✅ getter 통해 UserEntity 반환
 		String provider = signinuser.getProvider();
-		
-		
 		
 		
 
@@ -238,7 +246,30 @@ public class UserService {
 //	}
 
 	@Transactional
-	public Boolean logout(String token) {
+	public Boolean logout(String token, String providerFromFront) {
+		//System.out.println(token);
+	//	RestTemplate restTemplate = new RestTemplate();
+		
+		
+
+		
+		
+		
+		
+		
+		if(providerFromFront.equals("GOOGLE")){
+
+            System.out.println("Google 로그아웃 완료");
+
+		}	
+		else if(providerFromFront.equals("NAVER")){
+			System.out.println("NAVER");
+		}
+		else if(providerFromFront.equals("KAKAO")){
+			System.out.println("KAKAO");
+		}	
+			
+			
 			String email = jwtUtil.getEmail(token.replace("Bearer ", ""));
 			String provider = jwtUtil.getProvider(token.replace("Bearer ", ""));
 			refreshTokenRepository.deleteByEmailAndProvider(email, provider); //로그아웃 시 리프레시 토큰 삭제
@@ -247,7 +278,16 @@ public class UserService {
 
 
 
-	
+//	//oAuth2 Access Token 조회
+//	public String getOAuth2Token(OAuth2AuthenticationToken authentication) {
+//	    OAuth2AuthorizedClient client =
+//	        authorizedClientService.loadAuthorizedClient(
+//	            authentication.getAuthorizedClientRegistrationId(),
+//	            authentication.getName()
+//	        );
+//	    return client.getAccessToken().getTokenValue();
+//	}
+
 	
 	
 	

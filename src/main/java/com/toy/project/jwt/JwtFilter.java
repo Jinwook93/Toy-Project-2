@@ -43,6 +43,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	        //토큰에서 email과 role 획득
 	          String email = jwtUtil.getEmail(token);
 	          String role = jwtUtil.getRole(token);
+	          String provider = jwtUtil.getProvider(token);
 	  		Boolean expired = jwtUtil.getExpired(token);
 	  		
 //	  		토큰 소멸 시간 검증
@@ -57,7 +58,7 @@ public class JwtFilter extends OncePerRequestFilter {
 	  		
 	  		
 	  		//userEntity를 생성하여 값 set
-	          UserEntity userEntity = new UserEntity(email,"temppassword",role, null);
+	          UserEntity userEntity = new UserEntity(email,"temppassword",role, provider);
 	
 	  		//UserDetails에 회원 정보 객체 담기
 	          CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);

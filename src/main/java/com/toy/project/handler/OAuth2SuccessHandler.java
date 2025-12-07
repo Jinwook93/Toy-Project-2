@@ -6,6 +6,9 @@ import java.util.Map;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.oauth2.client.AuthorizedClientServiceOAuth2AuthorizedClientManager;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClientService;
 import org.springframework.security.oauth2.client.authentication.OAuth2AuthenticationToken;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -26,10 +29,13 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final JwtUtil jwtUtil;
     private final UserRepository userRepository;
+    private final OAuth2AuthorizedClientService authorizedClientService;
 
-    public OAuth2SuccessHandler(JwtUtil jwtUtil, UserRepository userRepository) {
+    
+    public OAuth2SuccessHandler(JwtUtil jwtUtil, UserRepository userRepository,  OAuth2AuthorizedClientService authorizedClientService) {
         this.jwtUtil = jwtUtil;
         this.userRepository = userRepository;
+        this.authorizedClientService = authorizedClientService; 
     }
 
     @Override
@@ -40,25 +46,43 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     	var oAuth2User = (OAuth2User) authentication.getPrincipal();
 
+    	//oAuth2 accessToken 불러오는 과정
+    	OAuth2AuthenticationToken oauthToken = (OAuth2AuthenticationToken) authentication;
+        OAuth2AuthorizedClient authorizedClient =
+            authorizedClientService.loadAuthorizedClient(
+                oauthToken.getAuthorizedClientRegistrationId(),
+                oauthToken.getName()
+            );
+
+        String oAuth2AccessToken = authorizedClient.getAccessToken().getTokenValue();
+        
+//        System.out.println("ACCESS TOKEN : "+ accessToken);
+    	
+    	
+    	
+    	
+    	
         // registrationId 가져오기
         String registrationId = ((OAuth2AuthenticationToken) authentication).getAuthorizedClientRegistrationId();
 
         String email = null;
-
+        String oAuth2Cookie= "oAuth2Cookie";
+        
         if ("google".equals(registrationId)) {
             email = oAuth2User.getAttribute("email");
-
+            oAuth2Cookie += "_google";
         } else if ("naver".equals(registrationId)) {
             Map<String, Object> responseMap = oAuth2User.getAttribute("response");
             if (responseMap != null) {
                 email = (String) responseMap.get("email");
             }
-
+            oAuth2Cookie += "_naver";
         } else if ("kakao".equals(registrationId)) {
             Map<String, Object> kakaoAccount = oAuth2User.getAttribute("kakao_account");
             if (kakaoAccount != null) {
                 email = (String) kakaoAccount.get("email");
             }
+            oAuth2Cookie += "_kakao";
         }
 
         if (email == null) {
@@ -94,9 +118,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         refreshtoken_cookie.setMaxAge(60 * 60 * 24 * 7); // 7일
         refreshtoken_cookie.setPath("/");
 
+        
+        
+
+        
+        Cookie oAuth2_cookie = new Cookie(oAuth2Cookie, oAuth2AccessToken);
+        oAuth2_cookie.setHttpOnly(true);
+        oAuth2_cookie.setSecure(true);
+        oAuth2_cookie.setMaxAge(60 * 60 * 24 * 1); // 7일
+        oAuth2_cookie.setPath("/");
+        
+        
         response.addCookie(accesstoken_cookie);
         response.addCookie(refreshtoken_cookie);
-
+        response.addCookie(oAuth2_cookie);
         // React 프론트엔드로 리다이렉트
         response.sendRedirect("http://localhost:5173/oauth2/redirect");
     }

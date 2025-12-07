@@ -3,19 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import "../css/header.css";
 import { logoutUser } from "../api/userAPI";
 import { useDispatch, useSelector } from "react-redux";
-import { logout, setIsLogin, setUsername } from "../redux/userAction";
+import { logout, setIsLogin, setProvider, setUsername } from "../redux/userAction";
 import { getLoginUserInfo} from "../api/userAPI";
 
 
 const Header = () => {
 
   const navigate = useNavigate();
-  const {isLogin, username} =  useSelector((state) => state.user);   //store에서 키가 user인 객체를 가져옴
+  const {isLogin, username, provider} =  useSelector((state) => state.user);   //store에서 키가 user인 객체를 가져옴
   const dispatch = useDispatch();
-
-
-
-
 
 
 
@@ -30,9 +26,10 @@ const Header = () => {
         try {
           const data = await getLoginUserInfo();
           dispatch(setUsername(data.email));
+          dispatch(setProvider(data.provider));
           dispatch(setIsLogin(true));
         } catch (err) {
-          console.error("유저 정보 불러오기 실패:", err);
+          console.error("유저 정보 불러오기 실패12312:", err);
         }
       }
     };
@@ -52,18 +49,20 @@ const Header = () => {
 
 
 
-  const handleLogout = async() => {
-   
+  const handleLogout = async(provider) => {
+ 
     // const response = await logoutUser(props.id, props.isLogin); 
-    const response = await logoutUser(); 
+
+    const response = await logoutUser(provider); 
     localStorage.removeItem("jwt");
     localStorage.removeItem("refreshJwt");
-    dispatch(setIsLogin(false));   // ✅ 상태 변경은 dispatch로
+    localStorage.removeItem(provider.toLowerCase()+"_AccessToken");
+    //dispatch(setIsLogin(false));   // ✅ 상태 변경은 dispatch로
     dispatch(logout());            // ✅ 다른 action도 dispatch로
+    //dispatch(setProvider(""));
     alert("로그아웃 되었습니다.");
     navigate("/login");
    
-
     // setIsLogin(false);
     // localStorage.removeItem("jwt"); // 토큰 제거
     // alert("로그아웃 되었습니다.");
@@ -87,7 +86,7 @@ const Header = () => {
           {isLogin?"":<Link to="/join">회원가입</Link>}
           {isLogin? <Link to="/getLoginUserInfo">내 정보</Link>:""}
           {isLogin ? (
-            <button className="logout-btn" onClick={handleLogout}>
+            <button className="logout-btn" onClick={() =>{handleLogout(provider)}}>
               로그아웃
             </button>
           ) : (
