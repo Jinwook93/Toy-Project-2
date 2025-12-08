@@ -29,20 +29,44 @@ const GetLoginUserInfo = () => {
       <h3>유저정보</h3>
       {userInfo ? (
         <div>
-          <p>이메일: {userInfo.email}</p>
-          <p>닉네임: {userInfo.nickname}</p>
-          <p>유저 이름: {userInfo.username}</p>
-          <p>휴대폰: {userInfo.phone}</p>
-          <p>주소: {userInfo.address}</p>
-          <p>역할: {userInfo.role}</p>
+          <div className ="row">
+            <div className ="col">
+          <p><b>이메일</b> &nbsp;{userInfo.email}</p>
+          <p><b>닉네임</b>&nbsp; {userInfo.nickname}</p>
+          <p><b>사용자 이름</b>&nbsp; {userInfo.username}</p>
+          <p><b>휴대폰</b>&nbsp; {userInfo.phone}</p>
+          <p><b>주소</b>&nbsp; {userInfo.address}</p>
+          <p><b>역할</b>&nbsp; {userInfo.role}</p>
           {/* <p>프로필: {userInfo.profile}</p>   */}
-         <p>프로필: <img 
+          </div>
+          <div div className ="col">
+           {userInfo.provider === null || userInfo.provider === ""? <p><img 
              src={`data:image/png;base64,${userInfo.profile}`} 
-            alt="프로필 이미지" 
-            /></p>
-        
-          <Link to={`/updateuser/${userInfo.id}`}>회원정보 수정</Link> 
-          <button type ="button" onClick={() => deleteUser(userInfo.id, navigate, dispatch)}>회원정보 삭제</button> 
+            alt="프로필 이미지" /></p>:""
+          }
+           {userInfo.provider === "GOOGLE"? <p><img 
+             src= "/icon/web_neutral_sq_na@4x.png"
+            alt="구글 프로필 이미지" /></p>:""
+          }
+          {userInfo.provider === "NAVER"? <p><img 
+             src= "/icon/btnG_icon_square.png"
+            alt="네이버 프로필 이미지" /></p>:""
+          }
+           {userInfo.provider === "KAKAO"? <p><img 
+             src= "/icon/kakaotalk_sharing_btn_small.png"
+            alt="카카오 프로필 이미지" /></p>:""
+          }
+
+
+
+
+
+
+
+            </div>
+          </div>
+         {userInfo.provider==="" ||userInfo.provider === null? <Link to={`/updateuser/${userInfo.id}`}>회원정보 수정</Link> :""}
+          <button type ="button" onClick={() => deleteUser(userInfo.id, userInfo.provider ,navigate, dispatch)}>회원정보 삭제</button> 
         </div>
       ) : (
         <p>로딩 중...</p>

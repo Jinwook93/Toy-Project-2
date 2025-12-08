@@ -7,6 +7,7 @@
     border-radius: 8px;             /* 모서리 둥글게 */
     box-shadow: 0 4px 12px rgba(0,0,0,0.1); /* 그림자 */
     text-align: center;
+    
   }
   
   /* 제목 */
@@ -17,7 +18,7 @@
   
   /* 입력 필드 */
   .login-container input {
-    width: 100%;
+    width: 90%;
     padding: 12px;
     margin: 10px 0;
     border: 1px solid #ccc;
@@ -66,18 +67,34 @@
 
 
 
+  .oauth-buttons {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: row; /* ✅ 가로 정렬 */
+    gap: 25px;           /* 버튼 간격 */
+    justify-content: center; /* 가운데 정렬 (선택) */
+    align-items: center;     /* 세로축 가운데 맞춤 (선택) */
+  }
+  
+  .oauth-buttons .logo {
+    width: 65px;   /* 원하는 가로 크기 */
+    height: 60px;  /* 원하는 세로 크기 */
+    cursor: pointer;
+  }
+
+
 
 
 
 
 /*oAuth2*/
 
-  .oauth-buttons {
+  /* .oauth-buttons {
     margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
-  }
+  } */
   
   .google-btn {
     background-color: #db4437; /* 구글 빨강 */

@@ -10,15 +10,28 @@ import { useSelector } from "react-redux";
 const Home = () => {
   const {isLogin,provider} = useSelector((state) =>state.user);
 
+
+
+
+
+
+
   return (
-    <div>
-   {isLogin?"":<Link to={"/login"}>로그인</Link>}
-  {isLogin?<Link to={`/getLoginUserInfo`}>회원정보</Link> :""} 
-    {/* {isLogin?<Link to={`/updateuser/${id}`}>회원수정</Link> :""} */}
-    {isLogin? "":<Link to={"/join"}>회원가입</Link>}
-    </div>
-    
+      <div>
+
+        홈
+      </div>
+
   );
+//   return (
+//     <div>
+//    {isLogin?"":<Link to={"/login"}>로그인</Link>}
+//   {isLogin?<Link to={`/getLoginUserInfo`}>회원정보</Link> :""} 
+//     {/* {isLogin?<Link to={`/updateuser/${id}`}>회원수정</Link> :""} */}
+//     {isLogin? "":<Link to={"/join"}>회원가입</Link>}
+//     </div>
+    
+//   );
 };
 
 export default Home;

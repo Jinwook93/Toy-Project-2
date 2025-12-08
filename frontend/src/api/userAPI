@@ -1,4 +1,4 @@
-import { setIsLogin } from '../redux/userAction';
+import { setIsLogin, logout } from '../redux/userAction';
 
 // userAPI.jsx
 const BASE_URL = "http://localhost:8080";
@@ -146,7 +146,7 @@ export const updateUser = async (user, profile) => {
 
 
 //회원삭제
-export const deleteUser = async (id, navigate, dispatcher) => {
+export const deleteUser = async (id, provider, navigate, dispatcher) => {
      const confirmed = confirm("계정을 삭제하시겠습니까?");
   if (!confirmed) {
     return; // 취소하면 여기서 함수 종료
@@ -164,10 +164,13 @@ export const deleteUser = async (id, navigate, dispatcher) => {
       throw new Error("회원삭제 실패");
     }
      //setIsLogin(false);
-    dispatcher(setIsLogin(false));      //setIsLogin import
+   // dispatcher(setIsLogin(false));      //setIsLogin import
+    const response2 = await logoutUser(provider);
+    dispatcher(logout());
     alert("삭제가 완료되었습니다");
    localStorage.removeItem("jwt");
      localStorage.removeItem("refreshJwt");
+     localStorage.removeItem(provider.toLowerCase()+"_AccessToken")
     navigate("/");
 
    // return response;
@@ -256,7 +259,8 @@ export const logoutUser = async (provider) => {
      "Content-Type": "application/json"
         },
         body: JSON.stringify({ "provider" : provider, //✅ {provider: 값} 형태로 전달
-                              "oAuth2Token" : localStorage.getItem(provider.toLowerCase()+"_AccessToken")
+                              "oAuth2Token" : 
+                              provider ==="" || provider === null? null :localStorage.getItem(provider.toLowerCase()+"_AccessToken")
                               })
       //  body:  JSON.stringify(provider)   //문자열로 전달
         });

@@ -24,10 +24,10 @@
   
   /* 프로필 이미지 */
   .user-info-container img {
-    max-width: 120px;
-    height: auto;
-    border-radius: 50%;
-    margin-top: 10px;
+    max-width: 200px;
+    height: 200px;
+    border-radius: 20%;
+    margin-top: 0px;
     border: 2px solid #ccc;
   }
   
@@ -60,3 +60,18 @@
   .user-info-container button:hover {
     background-color: #e60000;
   }
+
+  .row  .col {
+  display: flex;
+  flex-direction: column;   /* 세로로 쌓기 */
+  align-items: center;      /* 가로 가운데 */
+  justify-content: center;  /* 세로 가운데 (선택) */
+  text-align: center;       /* 텍스트도 가운데 */
+  width: 50%;
+}
+
+.row {
+  display: flex;
+  justify-content: center; /* row 안에서 col들을 가로 가운데 */
+  align-items: center;     /* 세로축 가운데 */
+}

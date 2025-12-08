@@ -263,12 +263,12 @@ public class UserService {
 		//System.out.println(token);
 		 RestTemplate restTemplate = new RestTemplate();
 
-		 
+		 System.out.println("프플:"+providerFromFront);
 
 
 		 
 		 
-		if(providerFromFront.equals("") || providerFromFront == null ) {
+		if (providerFromFront == null || providerFromFront.equals("")) {
 		    try {
 		        if (providerFromFront.equalsIgnoreCase("GOOGLE")) {
 		            String url = "https://accounts.google.com/o/oauth2/revoke?token=" + oAuth2AccessToken;

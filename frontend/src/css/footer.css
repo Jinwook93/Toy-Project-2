@@ -3,8 +3,8 @@
     color: #fff;                  /* 글자 흰색 */
     padding: 20px 0;              /* 위아래 여백 */
     text-align: center;           /* 가운데 정렬 */
-    position: fixed;              /* 화면 하단 고정 */
-    bottom: 0;
+    /* position: fixed;              화면 하단 고정 */
+    /* bottom: 0; */
     width: 100%;
   }
   

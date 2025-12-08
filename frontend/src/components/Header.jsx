@@ -83,6 +83,24 @@ const Header = () => {
 
         {/* 네비게이션 */}
         <nav className="nav">
+          <Link to="/join">메뉴1</Link>
+         <Link to="/getLoginUserInfo">메뉴2</Link>
+         <Link to="/getLoginUserInfo">메뉴3</Link>
+        </nav>
+
+
+
+
+
+
+        {/* 인사말 */}
+        <div className="welcome">
+
+        <div  id="logingreeting">
+          {isLogin ? `안녕하세요, ${username} 님`: "로그인이 필요합니다"}
+          </div>
+           {/* 네비게이션 */}
+        <nav className="nav">
           {isLogin?"":<Link to="/join">회원가입</Link>}
           {isLogin? <Link to="/getLoginUserInfo">내 정보</Link>:""}
           {isLogin ? (
@@ -93,10 +111,7 @@ const Header = () => {
             <Link to="/login">로그인</Link>
           )}
         </nav>
-
-        {/* 인사말 */}
-        <div className="welcome">
-          {isLogin ? `안녕하세요, ${username} 님`: "로그인이 필요합니다"}
+         
         </div>
       </div>
     </header>

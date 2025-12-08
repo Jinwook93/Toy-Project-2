@@ -33,6 +33,7 @@
     color: #bbb;
     text-decoration: none;
     transition: color 0.3s;
+    margin-top: 5px;
   }
   
   .nav a:hover {
@@ -53,5 +54,11 @@
   }
   
   .welcome {
+    display: flex;
     font-size: 14px;
+  }
+
+  .welcome > #logingreeting {
+    margin-top: 5px;
+    margin-right: 10px;
   }

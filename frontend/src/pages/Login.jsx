@@ -77,29 +77,30 @@ const Login = () => {
 
 
 
-
-
-
-
+      <div className="oauth-buttons">
+      <img src="/icon/web_neutral_sq_na@4x.png" className="logo"  alt="logo" onClick={() => window.location.href = "http://localhost:8080/oauth2/authorization/google"} />
+      <img src="/icon/btnG_icon_square.png" className="logo"  alt="logo" onClick={() => window.location.href = "http://localhost:8080/oauth2/authorization/naver"} />
+      <img src="/icon/kakaotalk_sharing_btn_small.png" className="logo"  alt="logo" onClick={() => window.location.href = "http://localhost:8080/oauth2/authorization/kakao"} />  
+      </div>    
      {/* ✅ OAuth2 로그인 버튼들 */}
- <div className="oauth-buttons">
+ {/*<div className="oauth-buttons">
  <button
    type="button"
    className="google-btn"
    onClick={() => window.location.href = "http://localhost:8080/oauth2/authorization/google"}
  >
-   {/* <img src="/icon/web_light_sq_na@1x.png" alt="logo" /> */}
+  
     구글 로그인
- </button>
-
+ </button> */}
+{/*
  <button
    type="button"
    className="naver-btn"
    onClick={() => window.location.href = "http://localhost:8080/oauth2/authorization/naver"}
  >
    네이버 로그인
- </button>
-
+ </button> */}
+{/*
  <button
    type="button"
    className="kakao-btn"
@@ -107,7 +108,7 @@ const Login = () => {
  >
    카카오 로그인
  </button>
-</div>
+</div>*/}
 
 
 
